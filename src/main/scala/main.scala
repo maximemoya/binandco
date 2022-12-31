@@ -1,7 +1,7 @@
 package fr.maxime.binandco
 
-import tools.{Sha256, Tools}
 import tools.Tools.organizeTextIn64BytesBlocksWithLengthEndLine
+import tools.{Sha256, Tools}
 
 import java.nio.charset.Charset
 import scala.util.control.Breaks.{break, breakable}
@@ -10,6 +10,7 @@ import scala.util.control.Breaks.{break, breakable}
 def main(): Unit = {
   val text0 = ""
   val text1 = "h"
+  val text4 = "hhhh"
   val text10 = "hhhhhhhhhh"
   val text55 = "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
   val text56 = "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
@@ -30,6 +31,9 @@ def main(): Unit = {
   //  val arrayN2 = Tools.getOrganizedTextIn64BytesBlocksWithExtra8Bytes(text)
   //  Tools.printN2ByteArray(arrayN2)
 
-  Tools.printN2ByteArray(Sha256.getFormattedBlocks(text127))
+  val formattedBlocks = Sha256.getFormattedBlocks(text64)
+  Tools.printN2ByteArray(formattedBlocks)
+  val chunks = Sha256.getChunks64Words(formattedBlocks)
+  Tools.printN2IntArray(chunks)
 
 }

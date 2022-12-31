@@ -17,6 +17,13 @@ object Tools {
       println(s"'${text.apply(i_char)}' = 0x$hexStr = 0b$binStr")
     }
   }
+
+  def printBinariesInfoAboutInt(i:Int, name:String = ""):Unit={
+    val hexStr = String.format("%02X", i)
+    val binStr = String.format("%32s", (i & 0xFFFFFFFF).toBinaryString).replace(" ", "0")
+    println(s"integer $i : $name")
+    println(s"0x$hexStr\n0b$binStr")
+  }
   
   def printN1ByteArray(array: Array[Byte]): Unit = {
     println(s"[ ${array.map { byte => String.format("%02x", byte) }.mkString("-")} ]")
@@ -28,8 +35,16 @@ object Tools {
 
   def printN2ByteArray(sqrtArray: Array[Array[Byte]]): Unit = {
     println("\nSquareArray info :\n[")
-    for (byte <- sqrtArray) {
-      println(s"[ ${byte.map { element => String.format("%02x", element) }.mkString("-")} ],")
+    for (bytes <- sqrtArray) {
+      println(s"[ ${bytes.map { element => String.format("%02x", element) }.mkString("-")} ],")
+    }
+    println("]")
+  }
+
+  def printN2IntArray(sqrtArray: Array[Array[Int]]): Unit = {
+    println("\nSquareArray info :\n[")
+    for (integers <- sqrtArray) {
+      println(s"[ ${integers.map { element => String.format("%08x", element) }.mkString("-")} ],")
     }
     println("]")
   }
