@@ -5,6 +5,7 @@ import java.nio.charset.Charset
 import scala.util.control.Breaks.{break, breakable}
 
 object Tools {
+  
   def printBinariesInfoAboutTextInUTF8(text: String): Unit = {
     println("encode in UTF-8")
     for (i_char <- text.indices) {
@@ -16,8 +17,28 @@ object Tools {
       println(s"'${text.apply(i_char)}' = 0x$hexStr = 0b$binStr")
     }
   }
+  
+  def printN1ByteArray(array: Array[Byte]): Unit = {
+    println(s"[ ${array.map { byte => String.format("%02x", byte) }.mkString("-")} ]")
+  }
 
-  def getOrganizedTextIn64BytesBlocks(text: String): Array[Array[Byte]] = {
+  def printN1ByteArray(array: Array[Byte], name:String): Unit = {
+    println(s" $name:\n[ ${array.map { byte => String.format("%02x", byte) }.mkString("-")} ]")
+  }
+
+  def printN2ByteArray(sqrtArray: Array[Array[Byte]]): Unit = {
+    println("\nSquareArray info :\n[")
+    for (byte <- sqrtArray) {
+      println(s"[ ${byte.map { element => String.format("%02x", element) }.mkString("-")} ],")
+    }
+    println("]")
+  }
+
+  // ----------
+  // Personal:
+  // --------
+
+  private def getOrganizedTextIn64BytesBlocks(text: String): Array[Array[Byte]] = {
 
     val blockSize = 64
 
@@ -49,7 +70,7 @@ object Tools {
     blocks
   }
 
-  def getOrganizedTextIn64BytesBlocksWithExtra8Bytes(text: String): Array[Array[Byte]] = {
+  private def getOrganizedTextIn64BytesBlocksWithExtra8Bytes(text: String): Array[Array[Byte]] = {
 
     val blockSize = 64
     val extraBytesLength = 8
@@ -94,24 +115,12 @@ object Tools {
 
     blocks
   }
-
-  def printN1ByteArray(array: Array[Byte]): Unit = {
-    println(s"[ ${array.map { byte => String.format("%02x", byte) }.mkString("-")} ]")
-  }
-
-  def printN2ByteArray(sqrtArray: Array[Array[Byte]]): Unit = {
-    println("\nSquareArray info :\n[")
-    for (byte <- sqrtArray) {
-      println(s"[ ${byte.map { element => String.format("%02x", element) }.mkString("-")} ],")
-    }
-    println("]")
-  }
-
+  
   // --------------
   // EXPERIMENTAL:
   // ------------
 
-  def organizeTextIn64BytesBlocksWithLengthEndLine(text: String): Unit = {
+  private def organizeTextIn64BytesBlocksWithLengthEndLine(text: String): Unit = {
 
     val blockSize = 64
     val endLineLength = 8
@@ -205,7 +214,7 @@ object Tools {
 
   }
 
-  def organizeTextIn256BytesBlocksWithLengthEndLine(text: String): Unit = {
+  private def organizeTextIn256BytesBlocksWithLengthEndLine(text: String): Unit = {
 
     val blockSize = 256
     val endLineLength = 16
