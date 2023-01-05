@@ -3,66 +3,141 @@ package tools.aes
 
 import tools.aes.Aes
 
+import tools.Sha256
+
 import java.nio.charset.Charset
 
 object Aes {
+  
+  private def shiftRowEncode(intsFormatted: IntsFormatted): Unit = {
 
-  private def getBytes4Formatted(text: String): Array[Byte] = {
-    println(s"text: $text")
-    val textBytes = text.getBytes(Charset.forName("UTF-8"))
-    println(s"Array text bytes length: ${textBytes.length}")
-    println(s"textBytes = 0x[${textBytes.map(byte => String.format("%02x", byte)).mkString(" ")}]")
-
-    val bytesLength = (((textBytes.length - 1) / 4) + 1) * 4
-    val bytes: Array[Byte] = new Array[Byte](bytesLength)
-    println(s"Array bytes length: $bytesLength")
-    for (i <- textBytes.indices) {
-      bytes.update(i, textBytes(i))
+    val copy1 = new Array[Int](4)
+    for (i <- intsFormatted()(1).indices) {
+      copy1.update(i, intsFormatted()(1)(i))
     }
-    //    for (i <- textBytes.length until bytes.length) {
-    //      bytes.update(i, 0x00)
-    //    }
-    println(s"bytes = 0x[${bytes.map(byte => String.format("%02x", byte)).mkString(" ")}]")
-    bytes
+    val copy2 = new Array[Int](4)
+    for (i <- intsFormatted()(2).indices) {
+      copy2.update(i, intsFormatted()(2)(i))
+    }
+    val copy3 = new Array[Int](4)
+    for (i <- intsFormatted()(3).indices) {
+      copy3.update(i, intsFormatted()(3)(i))
+    }
+
+    for (i <- 1 until intsFormatted().length) {
+      if (i == 1) {
+        for (j <- intsFormatted()(i).indices) {
+          if (j < intsFormatted()(i).length - 1) {
+            intsFormatted()(i).update(j, intsFormatted()(i)(j + 1))
+          }
+          else {
+            intsFormatted()(i).update(j, copy1(0))
+          }
+        }
+      }
+      else if (i == 2) {
+        for (j <- intsFormatted()(i).indices) {
+          if (j < intsFormatted()(i).length - 2) {
+            intsFormatted()(i).update(j, intsFormatted()(i)(j + 2))
+          }
+          else if (j < intsFormatted()(i).length - 1) {
+            intsFormatted()(i).update(j, copy2(0))
+          }
+          else {
+            intsFormatted()(i).update(j, copy2(1))
+          }
+        }
+      }
+      else {
+        for (j <- intsFormatted()(i).indices) {
+          if (j < intsFormatted()(i).length - 3) {
+            intsFormatted()(i).update(j, intsFormatted()(i)(j + 3))
+          }
+          else if (j < intsFormatted()(i).length - 2) {
+            intsFormatted()(i).update(j, copy3(0))
+          }
+          else if (j < intsFormatted()(i).length - 1) {
+            intsFormatted()(i).update(j, copy3(1))
+          }
+          else {
+            intsFormatted()(i).update(j, copy3(2))
+          }
+        }
+      }
+    }
+
   }
 
-  private def getN2Ints(bytes4Formatted: Bytes4Formatted, packetSize: Int): Array[Array[Int]] = {
-    val bytes = bytes4Formatted()
-    val intsLength = (((bytes.length - 1) / (packetSize * 4)) + 1) * packetSize
-    val ints: Array[Int] = new Array[Int](intsLength)
-    println(s"Array ints length: $intsLength")
-    for (i <- 0 until (bytes.length / 4)) {
-      val bufferBytes: Array[Byte] = new Array[Byte](4)
-      for (j <- bufferBytes.indices) {
-        bufferBytes.update(j, bytes(j + i * 4))
-      }
-      ints.update(i, BigInt.apply(bufferBytes).toInt)
-    }
-    println(s"ints = 0x[${ints.map(int => String.format("%08x", int)).mkString(" ")}]")
+  private def shiftRowDecode(intsFormatted: IntsFormatted): Unit = {
 
-    val n2IntsLength = intsLength / packetSize
-    val n2Ints = new Array[Array[Int]](n2IntsLength)
-    for (i <- n2Ints.indices) {
-      val bufferInts = new Array[Int](packetSize)
-      for (j <- bufferInts.indices) {
-        bufferInts.update(j, ints(j + i * packetSize))
-      }
-      n2Ints.update(i, bufferInts)
+    val copy1 = new Array[Int](4)
+    for (i <- intsFormatted()(1).indices) {
+      copy1.update(i, intsFormatted()(1)(i))
+    }
+    val copy2 = new Array[Int](4)
+    for (i <- intsFormatted()(2).indices) {
+      copy2.update(i, intsFormatted()(2)(i))
+    }
+    val copy3 = new Array[Int](4)
+    for (i <- intsFormatted()(3).indices) {
+      copy3.update(i, intsFormatted()(3)(i))
     }
 
-    println(s"n2Ints: \n0x[\n${n2Ints.map(_.map(String.format(s"%08x", _)).mkString(" ")).mkString("\n")}\n]")
-    n2Ints
+    for (i <- 1 until intsFormatted().length) {
+      if (i == 1) {
+        for (j <- intsFormatted().indices) {
+          if (j == 0) {
+            intsFormatted()(i).update(j, copy1(3))
+          }
+          else {
+            intsFormatted()(i).update(j, copy1(j - 1))
+          }
+        }
+      }
+      else if (i == 2) {
+        for (j <- intsFormatted()(i).indices) {
+          if (j < intsFormatted()(i).length - 2) {
+            intsFormatted()(i).update(j, copy2(j + 2))
+          }
+          else if (j < intsFormatted()(i).length - 1) {
+            intsFormatted()(i).update(j, copy2(0))
+          }
+          else {
+            intsFormatted()(i).update(j, copy2(1))
+          }
+        }
+      }
+      else {
+        for (j <- intsFormatted()(i).indices) {
+          if (j < intsFormatted()(i).length - 1) {
+            intsFormatted()(i).update(j, intsFormatted()(i)(j + 1))
+          }
+          else {
+            intsFormatted()(i).update(j, copy3(0))
+          }
+        }
+      }
+    }
+
   }
 
-  def cypher(text: String): Unit = {
+  def cypher(plaintext: String, keyText: String): Unit = {
 
-    val bytes4Formatted = Bytes4Formatted.create(text)
-    val n2Ints256bits = getN2Ints(bytes4Formatted, 8)
+    val key256bits = Sha256.hash(keyText)
+    println(s"key256bits $key256bits")
+
+    val bytes4Formatted = Bytes4Formatted(key256bits)
+    val intsFormatted4x4Ints = IntsFormatted(bytes4Formatted, 4)
+
+    shiftRowEncode(intsFormatted4x4Ints)
+    println(intsFormatted4x4Ints)
+    shiftRowDecode(intsFormatted4x4Ints)
+    println(intsFormatted4x4Ints)
 
   }
 
 }
 
 object TestIt extends App {
-  Aes.cypher("mm")
+  Aes.cypher("mm", "test")
 }

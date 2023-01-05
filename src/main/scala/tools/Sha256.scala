@@ -251,15 +251,15 @@ object Sha256 {
 
     }
 
-    val h0Str = String.format("%02x", h0)
-    val h1Str = String.format("%02x", h1)
-    val h2Str = String.format("%02x", h2)
-    val h3Str = String.format("%02x", h3)
-    val h4Str = String.format("%02x", h4)
-    val h5Str = String.format("%02x", h5)
-    val h6Str = String.format("%02x", h6)
-    val h7Str = String.format("%02x", h7)
-    s"\n$h0Str$h1Str$h2Str$h3Str$h4Str$h5Str$h6Str$h7Str"
+    val h0Str = String.format("%08x", h0)
+    val h1Str = String.format("%08x", h1)
+    val h2Str = String.format("%08x", h2)
+    val h3Str = String.format("%08x", h3)
+    val h4Str = String.format("%08x", h4)
+    val h5Str = String.format("%08x", h5)
+    val h6Str = String.format("%08x", h6)
+    val h7Str = String.format("%08x", h7)
+    s"$h0Str$h1Str$h2Str$h3Str$h4Str$h5Str$h6Str$h7Str"
 
   }
 
