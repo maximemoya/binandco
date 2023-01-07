@@ -8,9 +8,9 @@ import java.nio.charset.Charset
  *   apply() => GET Array[Byte] formatted by multiple of 4
  *   example:
  *      text = "mm" (0x[6d 6d])
- *        will produce an Bytes4Formatted => 0x[6d 6d 00 00]
+ *        will produce a Bytes4Formatted => 0x[6d 6d 00 00]
  *      text = "mmmmm" (0x[6d 6d 6d 6d 6d])
- *        will produce an Bytes4Formatted => 0x[6d 6d 6d 6d 6d 00 00 00]
+ *        will produce a Bytes4Formatted => 0x[6d 6d 6d 6d 6d 00 00 00]
  * }}}
  *
  * @param text String
@@ -40,14 +40,14 @@ class Bytes4Formatted(text: String) {
  *   example:
  *      bytes4Formatted = 0x[6d, 6d, 6d, 6d, 6d, 00, 00, 00]
  *      packetSize = 1 (1*4 Bytes)
- *        will produce an IntsFormatted => 
+ *        will produce an IntsFormatted =>
  *           [
  *            [0x(6d 6d 6d 6d)],
  *            [0x(6d 6d 00 00)]
  *           ]
  *      bytes4Formatted = 0x[6d, 6d, 6d, 6d, 6d, 00, 00, 00]
  *      packetSize = 3 (3*4 Bytes)
- *        will produce an IntsFormatted => 
+ *        will produce an IntsFormatted =>
  *           [
  *            [0x(6d 6d 6d 6d), 0x(6d 00 00 00), 0x(00 00 00 00)]
  *           ]
@@ -100,7 +100,7 @@ object AesTools {
 
   /**
    * {{{
-   *   shift row's of IntsFormatted (4x4: Array[Array[Int]]):
+   *   shift row's of an IntsFormatted (4x4: Array[Array[Int]]):
    *    from => [
    *        [0,1,2,3],
    *        [0,1,2,3], rotate left by 1
@@ -178,7 +178,7 @@ object AesTools {
 
   /**
    * {{{
-   *   shift row's of IntsFormatted (4x4: Array[Array[Int]]):
+   *   shift row's of an IntsFormatted (4x4: Array[Array[Int]]):
    *    from => [
    *        [0,1,2,3],
    *        [1,2,3,0], rotate right by 1
