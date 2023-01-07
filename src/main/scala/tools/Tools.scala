@@ -5,7 +5,7 @@ import java.nio.charset.Charset
 import scala.util.control.Breaks.{break, breakable}
 
 object Tools {
-  
+
   def printBinariesInfoAboutTextInUTF8(text: String): Unit = {
     println("encode in UTF-8")
     for (i_char <- text.indices) {
@@ -18,18 +18,18 @@ object Tools {
     }
   }
 
-  def printBinariesInfoAboutInt(i:Int, name:String = ""):Unit={
+  def printBinariesInfoAboutInt(i: Int, name: String = ""): Unit = {
     val hexStr = String.format("%02X", i)
     val binStr = String.format("%32s", (i & 0xFFFFFFFF).toBinaryString).replace(" ", "0")
     println(s"integer $i : $name")
     println(s"0x$hexStr\n0b$binStr")
   }
-  
+
   def printN1ByteArray(array: Array[Byte]): Unit = {
     println(s"[ ${array.map { byte => String.format("%02x", byte) }.mkString("-")} ]")
   }
 
-  def printN1ByteArray(array: Array[Byte], name:String): Unit = {
+  def printN1ByteArray(array: Array[Byte], name: String): Unit = {
     println(s" $name:\n[ ${array.map { byte => String.format("%02x", byte) }.mkString("-")} ]")
   }
 
@@ -130,7 +130,7 @@ object Tools {
 
     blocks
   }
-  
+
   // --------------
   // EXPERIMENTAL:
   // ------------

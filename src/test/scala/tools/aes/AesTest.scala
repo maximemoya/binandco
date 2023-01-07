@@ -1,11 +1,11 @@
 package fr.maxime.binandco
 package tools.aes
 
-import collection.mutable.Stack
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
 import scala.collection.mutable
+import scala.collection.mutable.Stack
 
 class AesTest extends AnyFlatSpec with should.Matchers {
 
@@ -15,13 +15,13 @@ class AesTest extends AnyFlatSpec with should.Matchers {
     val intsFormatted = new IntsFormatted(bytes, 4)
 
     val intsFormattedEncoded = Array(
-      Array(0x61616161,0x62626262,0x63636363,0x64646464),
-      Array(0x66666666,0x67676767,0x68686868,0x65656565),
-      Array(0x6b6b6b6b,0x6c6c6c6c,0x69696969,0x6a6a6a6a),
-      Array(0x70707070,0x6d6d6d6d,0x6e6e6e6e,0x6f6f6f6f)
+      Array(0x61616161, 0x62626262, 0x63636363, 0x64646464),
+      Array(0x66666666, 0x67676767, 0x68686868, 0x65656565),
+      Array(0x6b6b6b6b, 0x6c6c6c6c, 0x69696969, 0x6a6a6a6a),
+      Array(0x70707070, 0x6d6d6d6d, 0x6e6e6e6e, 0x6f6f6f6f)
     )
 
-    Aes.shiftRowEncode(intsFormatted)
+    AesTools.shiftRowEncode(intsFormatted)
     intsFormatted() should be(intsFormattedEncoded)
 
   }
@@ -38,7 +38,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
       Array(0x6d6d6d6d, 0x6e6e6e6e, 0x6f6f6f6f, 0x70707070)
     )
 
-    Aes.shiftRowDecode(intsFormatted)
+    AesTools.shiftRowDecode(intsFormatted)
     intsFormatted() should be(intsFormattedDecoded)
 
   }

@@ -1,5 +1,5 @@
 package fr.maxime.binandco
-package tools
+package tools.sha
 
 object Sha256 {
 
