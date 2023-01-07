@@ -6,6 +6,9 @@ target/
 ### bsp ###
 .bsp/
 
+### lib ###
+lib/
+
 ### IntelliJ IDEA ###
 .idea/
 .idea/modules.xml

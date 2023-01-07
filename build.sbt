@@ -7,3 +7,5 @@ lazy val root = (project in file("."))
     name := "binandco",
     idePackagePrefix := Some("fr.maxime.binandco")
   )
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % Test

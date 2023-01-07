@@ -9,7 +9,7 @@ import java.nio.charset.Charset
 
 object Aes {
   
-  private def shiftRowEncode(intsFormatted: IntsFormatted): Unit = {
+  def shiftRowEncode(intsFormatted: IntsFormatted): Unit = {
 
     val copy1 = new Array[Int](4)
     for (i <- intsFormatted()(1).indices) {
@@ -68,7 +68,7 @@ object Aes {
 
   }
 
-  private def shiftRowDecode(intsFormatted: IntsFormatted): Unit = {
+  def shiftRowDecode(intsFormatted: IntsFormatted): Unit = {
 
     val copy1 = new Array[Int](4)
     for (i <- intsFormatted()(1).indices) {
@@ -121,7 +121,7 @@ object Aes {
 
   }
 
-  def cypher(plaintext: String, keyText: String): Unit = {
+  def encodeTextWithKey(plaintext: String, keyText: String): Unit = {
 
     val key256bits = Sha256.hash(keyText)
     println(s"key256bits $key256bits")
@@ -138,6 +138,6 @@ object Aes {
 
 }
 
-object TestIt extends App {
-  Aes.cypher("mm", "test")
+object TryIt extends App {
+  Aes.encodeTextWithKey("mm", "test")
 }
