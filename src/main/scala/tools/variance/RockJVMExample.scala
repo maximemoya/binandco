@@ -24,7 +24,7 @@ private object RockJVMExample extends App {
   }
 
   private final case class Box[+A](valueBefore: Option[A] = Option.empty, value: A) {
-    val boxType: String = getBoxType()
+    val boxType: String = getBoxType
 
     private def getBoxType: String = {
       value match {

@@ -23,8 +23,10 @@ class Bytes4Formatted(text: String) {
 
   private def init(): Array[Byte] = {
     val textBytes = text.getBytes(Charset.forName("UTF-8"))
-    println(s"Array text bytes length: ${textBytes.length}")
-    println(s"textBytes = 0x[${textBytes.map(byte => String.format("%02x", byte)).mkString(" ")}]")
+
+    //    println(s"Array text bytes length: ${textBytes.length}")
+    //    println(s"textBytes = 0x[${textBytes.map(byte => String.format("%02x", byte)).mkString(" ")}]")
+
     val bytesLength = (((textBytes.length - 1) / 4) + 1) * 4
     val bytes: Array[Byte] = new Array[Byte](bytesLength)
     for (i <- textBytes.indices) {
@@ -70,7 +72,9 @@ class IntsFormatted(bytes4Formatted: Bytes4Formatted, packetSize: Int) {
     val bytes = bytes4Formatted()
     val intsLength = (((bytes.length - 1) / (packetSize * 4)) + 1) * packetSize
     val ints: Array[Int] = new Array[Int](intsLength)
-    println(s"Array ints length: $intsLength")
+
+    //    println(s"Array ints length: $intsLength")
+
     for (i <- 0 until (bytes.length / 4)) {
       val bufferBytes: Array[Byte] = new Array[Byte](4)
       for (j <- bufferBytes.indices) {
@@ -78,7 +82,8 @@ class IntsFormatted(bytes4Formatted: Bytes4Formatted, packetSize: Int) {
       }
       ints.update(i, BigInt.apply(bufferBytes).toInt)
     }
-    println(s"ints = 0x[${ints.map(int => String.format("%08x", int)).mkString(" ")}]")
+
+    //    println(s"ints = 0x[${ints.map(int => String.format("%08x", int)).mkString(" ")}]")
 
     val n2IntsLength = intsLength / packetSize
     val n2Ints = new Array[Array[Int]](n2IntsLength)
@@ -90,13 +95,34 @@ class IntsFormatted(bytes4Formatted: Bytes4Formatted, packetSize: Int) {
       n2Ints.update(i, bufferInts)
     }
 
-    println(s"n2Ints: \n0x[\n${n2Ints.map(_.map(String.format(s"%08x", _)).mkString(" ")).mkString("\n")}\n]")
+    //    println(s"n2Ints: \n0x[\n${n2Ints.map(_.map(String.format(s"%08x", _)).mkString(" ")).mkString("\n")}\n]")
+
     n2Ints
   }
 
 }
 
 object AesTools {
+
+  private def get3LastArrayCopied(intsFormatted: IntsFormatted): (Array[Int], Array[Int], Array[Int]) = {
+
+    val copy1 = new Array[Int](4)
+    for (i <- intsFormatted()(1).indices) {
+      copy1.update(i, intsFormatted()(1)(i))
+    }
+
+    val copy2 = new Array[Int](4)
+    for (i <- intsFormatted()(2).indices) {
+      copy2.update(i, intsFormatted()(2)(i))
+    }
+
+    val copy3 = new Array[Int](4)
+    for (i <- intsFormatted()(3).indices) {
+      copy3.update(i, intsFormatted()(3)(i))
+    }
+
+    (copy1, copy2, copy3)
+  }
 
   /**
    * {{{
@@ -119,19 +145,7 @@ object AesTools {
    */
   def shiftRowEncode(intsFormatted: IntsFormatted): Unit = {
 
-    val copy1 = new Array[Int](4)
-    for (i <- intsFormatted()(1).indices) {
-      copy1.update(i, intsFormatted()(1)(i))
-    }
-    val copy2 = new Array[Int](4)
-    for (i <- intsFormatted()(2).indices) {
-      copy2.update(i, intsFormatted()(2)(i))
-    }
-    val copy3 = new Array[Int](4)
-    for (i <- intsFormatted()(3).indices) {
-      copy3.update(i, intsFormatted()(3)(i))
-    }
-
+    val (copy1, copy2, copy3) = get3LastArrayCopied(intsFormatted)
     for (i <- 1 until intsFormatted().length) {
       if (i == 1) {
         for (j <- intsFormatted()(i).indices) {
@@ -197,19 +211,7 @@ object AesTools {
    */
   def shiftRowDecode(intsFormatted: IntsFormatted): Unit = {
 
-    val copy1 = new Array[Int](4)
-    for (i <- intsFormatted()(1).indices) {
-      copy1.update(i, intsFormatted()(1)(i))
-    }
-    val copy2 = new Array[Int](4)
-    for (i <- intsFormatted()(2).indices) {
-      copy2.update(i, intsFormatted()(2)(i))
-    }
-    val copy3 = new Array[Int](4)
-    for (i <- intsFormatted()(3).indices) {
-      copy3.update(i, intsFormatted()(3)(i))
-    }
-
+    val (copy1, copy2, copy3) = get3LastArrayCopied(intsFormatted)
     for (i <- 1 until intsFormatted().length) {
       if (i == 1) {
         for (j <- intsFormatted().indices) {

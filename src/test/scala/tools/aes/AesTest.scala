@@ -9,7 +9,7 @@ import scala.collection.mutable.Stack
 
 class AesTest extends AnyFlatSpec with should.Matchers {
 
-  "A Stack" should "encode shiftRow" in {
+  "Encoding" should "encode shiftRow" in {
 
     val bytes = new Bytes4Formatted("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp")
     val intsFormatted = new IntsFormatted(bytes, 4)
@@ -26,7 +26,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
 
   }
 
-  "A Stack" should "decode shiftRow" in {
+  "Decoding" should "decode shiftRow" in {
 
     val bytes = new Bytes4Formatted("aaaabbbbccccddddffffgggghhhheeeekkkklllliiiijjjjppppmmmmnnnnoooo")
     val intsFormatted = new IntsFormatted(bytes, 4)
