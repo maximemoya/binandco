@@ -1,2 +1,2 @@
 # binandco
-a binary expirementation work
+a binary experimentation work
