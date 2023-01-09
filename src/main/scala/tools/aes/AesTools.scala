@@ -2,6 +2,7 @@ package fr.maxime.binandco
 package tools.aes
 
 import java.nio.charset.Charset
+import scala.util.Random
 
 /**
  * {{{
@@ -247,6 +248,35 @@ object AesTools {
         }
       }
     }
+
+  }
+
+  def createRandomTable16x16(): Array[Byte] = {
+    val arrLenght = 16 * 16
+    val arr = new Array[Byte](arrLenght)
+
+    for (i <- arr.indices) {
+      arr.update(i, i.toByte)
+    }
+
+    Random.shuffle(arr).toArray
+
+  }
+
+  def transformByteByArray16x16(byte: Byte, arr: Array[Byte]) : Byte = {
+
+    val str = String.format("%02x", byte)
+    val line = Integer.parseInt(str(0).toString, 16)
+    val column = Integer.parseInt(str(1).toString, 16)
+    val indexToReach = line * 16 + column
+
+    println(s"byte= $byte | 0x${String.format("%02x", byte)}")
+    println(s"str= \"$str\"")
+    println(s"line= $line")
+    println(s"column= $column")
+    println(s"arr($indexToReach)=${String.format("%02x",arr(indexToReach))}")
+
+    arr(indexToReach)
 
   }
 

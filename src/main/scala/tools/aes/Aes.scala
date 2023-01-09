@@ -4,6 +4,8 @@ package tools.aes
 import tools.aes.{Aes, AesTools}
 import tools.sha.Sha256
 
+import tools.aes.AesTools
+
 import java.nio.charset.Charset
 
 object Aes {
@@ -26,5 +28,8 @@ object Aes {
 }
 
 object TryIt extends App {
-  Aes.encodeTextWithKey("mm", "test")
+//  Aes.encodeTextWithKey("mm", "test")
+  val array = AesTools.createRandomTable16x16()
+  AesTools.transformByteByArray16x16(230.toByte,array)
+
 }
