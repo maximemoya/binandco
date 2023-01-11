@@ -2,6 +2,7 @@ package fr.maxime.binandco
 package tools.aes
 
 import java.nio.charset.Charset
+import scala.compiletime.ops.boolean.||
 import scala.util.Random
 
 /**
@@ -57,7 +58,7 @@ class Bytes4Formatted(text: String) {
  * }}}
  *
  * @param bytes4Formatted Bytes4Formatted
- * @param packetSize      length of Array[Int]
+ * @param packetSize      quantity of Array[Int]
  */
 class IntsFormatted(bytes4Formatted: Bytes4Formatted, packetSize: Int) {
 
@@ -99,6 +100,65 @@ class IntsFormatted(bytes4Formatted: Bytes4Formatted, packetSize: Int) {
     //    println(s"n2Ints: \n0x[\n${n2Ints.map(_.map(String.format(s"%08x", _)).mkString(" ")).mkString("\n")}\n]")
 
     n2Ints
+  }
+
+}
+
+/**
+ * {{{
+ *   apply() => Array[Byte] table 256 Bytes (16x16)
+ * }}}
+ *
+ * @param array256Bytes Array[Byte]
+ */
+class Table16x16(array256Bytes: Array[Byte]) {
+
+  // --------
+  // Public:
+  // ------
+  def apply(): Array[Byte] = table
+
+  def get(x: Int, y: Int): Byte = table(x + y * 16)
+
+  def get(n: Int): Byte = table(n)
+
+  override def toString: String = tableString
+
+  // ---------
+  // Private:
+  // -------
+  private val table: Array[Byte] = initTable()
+  private val tableString: String = initTableString()
+
+  private def initTable() = {
+    val returnedArray = new Array[Byte](256)
+    if (array256Bytes.length >= 256) {
+      for (i <- returnedArray.indices) {
+        returnedArray.update(i, array256Bytes(i))
+      }
+    }
+    else {
+      for (i <- array256Bytes.indices) {
+        returnedArray.update(i, array256Bytes(i))
+      }
+      //      for (i <- array256Bytes.length until returnedArray.length){
+      //        returnedArray.update(i,0x00)
+      //      }
+    }
+    returnedArray
+  }
+
+  private def initTableString() = {
+    val arrayString = new Array[String](table.length)
+    for (i <- table.indices) {
+      if (i % 16 == 0) {
+        arrayString.update(i, s"\n${String.format("%02x", table(i))}")
+      }
+      else {
+        arrayString.update(i, s"${String.format("%02x", table(i))}")
+      }
+    }
+    s"${arrayString.mkString(" ")}\n"
   }
 
 }
@@ -251,33 +311,83 @@ object AesTools {
 
   }
 
-  def createRandomTable16x16(): Array[Byte] = {
-    val arrLenght = 16 * 16
-    val arr = new Array[Byte](arrLenght)
-
-    for (i <- arr.indices) {
-      arr.update(i, i.toByte)
+  def createRandomTable16x16(): Table16x16 = {
+    val arrLength = 16 * 16
+    val array = new Array[Byte](arrLength)
+    for (i <- array.indices) {
+      array.update(i, i.toByte)
     }
+    new Table16x16(Random.shuffle(array).toArray)
+  }
 
-    Random.shuffle(arr).toArray
+  def getDecodeTable16x16(tableEncode: Table16x16): Table16x16 = {
+
+    val array = new Array[Byte](256)
+    for (i <- tableEncode().indices) {
+      val byte = tableEncode()(i)
+      val byteHex = String.format("%02x", byte)
+      val line = Integer.parseInt(byteHex(0).toString, 16)
+      val column = Integer.parseInt(byteHex(1).toString, 16)
+      val index = line * 16 + column
+
+      array.update(index, i.toByte)
+    }
+    new Table16x16(array)
+  }
+
+  private def transformByteAccordingTable16x16(byte: Byte, table: Table16x16): Byte = {
+
+    //    val str = String.format("%02x", byte)
+    //    val line = Integer.parseInt(str(0).toString, 16)
+    //    val column = Integer.parseInt(str(1).toString, 16)
+    //
+    //    println(s"byte= $byte | 0x${String.format("%02x", byte)}")
+    //    println(s"str= \"$str\"")
+    //    println(s"line= ${line + 1}")
+    //    println(s"column= ${column + 1}")
+
+    var indexToReach: Int = byte
+    if (byte < 0) indexToReach = byte + 256
+
+    //    println(s"arr($indexToReach)=${String.format("%02x", table.get(indexToReach))}")
+
+    table.get(indexToReach)
 
   }
 
-  def transformByteByArray16x16(byte: Byte, arr: Array[Byte]) : Byte = {
+  private def transformIntAccordingTable16x16(int: Int, table: Table16x16): Int = {
+    val bytes = BigInt.apply(int).toByteArray
 
-    val str = String.format("%02x", byte)
-    val line = Integer.parseInt(str(0).toString, 16)
-    val column = Integer.parseInt(str(1).toString, 16)
-    val indexToReach = line * 16 + column
+    //    println(s"before bytes = 0x[${bytes.map(b => String.format("%02x", b)).mkString(" ")}]")
 
-    println(s"byte= $byte | 0x${String.format("%02x", byte)}")
-    println(s"str= \"$str\"")
-    println(s"line= $line")
-    println(s"column= $column")
-    println(s"arr($indexToReach)=${String.format("%02x",arr(indexToReach))}")
+    for (i <- bytes.indices) {
+      val newByte = transformByteAccordingTable16x16(bytes(i), table)
+      bytes.update(i, newByte)
+    }
 
-    arr(indexToReach)
+    //    println(s"after bytes  = 0x[${bytes.map(b => String.format("%02x", b)).mkString(" ")}]")
 
+    BigInt.apply(bytes).toInt
+  }
+
+  def mixColumnEncode(intsFormatted: IntsFormatted, tableEncode: Table16x16): Unit = {
+    for (line <- intsFormatted().indices) {
+      for (column <- intsFormatted()(line).indices) {
+        val oldInt = intsFormatted()(line)(column)
+        val newInt = transformIntAccordingTable16x16(oldInt, tableEncode)
+        intsFormatted()(line).update(column, newInt)
+      }
+    }
+  }
+
+  def mixColumnDecode(intsFormatted: IntsFormatted, tableDecode: Table16x16): Unit = {
+    for (line <- intsFormatted().indices) {
+      for (column <- intsFormatted()(line).indices) {
+        val oldInt = intsFormatted()(line)(column)
+        val newInt = transformIntAccordingTable16x16(oldInt, tableDecode)
+        intsFormatted()(line).update(column, newInt)
+      }
+    }
   }
 
 }
