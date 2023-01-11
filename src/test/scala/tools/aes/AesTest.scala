@@ -77,7 +77,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
     }
     val table16x16 = Table16x16(array256)
 
-    val intsFormattedEncoded = Array(
+    val intsFormattedDecoded = Array(
       Array(0x9e9e9e9e, 0x9d9d9d9d, 0x9c9c9c9c, 0x9b9b9b9b),
       Array(0x9a9a9a9a, 0x99999999, 0x98989898, 0x97979797),
       Array(0x96969696, 0x95959595, 0x94949494, 0x93939393),
@@ -85,7 +85,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
     )
 
     AesTools.mixColumnDecode(intsFormatted, table16x16)
-    intsFormatted() should be(intsFormattedEncoded)
+    intsFormatted() should be(intsFormattedDecoded)
 
   }
 
