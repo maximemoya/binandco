@@ -9,9 +9,32 @@ import scala.collection.mutable.Stack
 
 class AesTest extends AnyFlatSpec with should.Matchers {
 
+  "SubBytes" should "succeed Encoding" in {
+
+    val bytes = new BytesMultipleOf4("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp")
+    val intsFormatted = new IntsFormatted(bytes, 4)
+
+    val array256 = new Array[Byte](256)
+    for (i <- array256.indices) {
+      array256.update(i, (255 - i).toByte)
+    }
+    val table16x16 = Table16x16(array256)
+
+    val intsFormattedEncoded = Array(
+      Array(0x9e9e9e9e, 0x9d9d9d9d, 0x9c9c9c9c, 0x9b9b9b9b),
+      Array(0x9a9a9a9a, 0x99999999, 0x98989898, 0x97979797),
+      Array(0x96969696, 0x95959595, 0x94949494, 0x93939393),
+      Array(0x92929292, 0x91919191, 0x90909090, 0x8f8f8f8f)
+    )
+
+    AesTools.subBytes(intsFormatted, table16x16)
+    intsFormatted() should be(intsFormattedEncoded)
+
+  }
+
   "ShiftRow" should "succeed Encoding" in {
 
-    val bytes = new Bytes4Formatted("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp")
+    val bytes = new BytesMultipleOf4("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp")
     val intsFormatted = new IntsFormatted(bytes, 4)
 
     val intsFormattedEncoded = Array(
@@ -26,9 +49,9 @@ class AesTest extends AnyFlatSpec with should.Matchers {
 
   }
 
-  "MixColumn" should "succeed Encoding" in {
+  "SubBytes" should "succeed Decoding" in {
 
-    val bytes = new Bytes4Formatted("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp")
+    val bytes = new BytesMultipleOf4("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp")
     val intsFormatted = new IntsFormatted(bytes, 4)
 
     val array256 = new Array[Byte](256)
@@ -37,21 +60,21 @@ class AesTest extends AnyFlatSpec with should.Matchers {
     }
     val table16x16 = Table16x16(array256)
 
-    val intsFormattedEncoded = Array(
+    val intsFormattedDecoded = Array(
       Array(0x9e9e9e9e, 0x9d9d9d9d, 0x9c9c9c9c, 0x9b9b9b9b),
       Array(0x9a9a9a9a, 0x99999999, 0x98989898, 0x97979797),
       Array(0x96969696, 0x95959595, 0x94949494, 0x93939393),
       Array(0x92929292, 0x91919191, 0x90909090, 0x8f8f8f8f)
     )
 
-    AesTools.mixColumnEncode(intsFormatted, table16x16)
-    intsFormatted() should be(intsFormattedEncoded)
+    AesTools.subBytes(intsFormatted, table16x16)
+    intsFormatted() should be(intsFormattedDecoded)
 
   }
 
   "ShiftRow" should "succeed Decoding" in {
 
-    val bytes = new Bytes4Formatted("aaaabbbbccccddddffffgggghhhheeeekkkklllliiiijjjjppppmmmmnnnnoooo")
+    val bytes = new BytesMultipleOf4("aaaabbbbccccddddffffgggghhhheeeekkkklllliiiijjjjppppmmmmnnnnoooo")
     val intsFormatted = new IntsFormatted(bytes, 4)
 
     val intsFormattedDecoded = Array(
@@ -62,29 +85,6 @@ class AesTest extends AnyFlatSpec with should.Matchers {
     )
 
     AesTools.shiftRowDecode(intsFormatted)
-    intsFormatted() should be(intsFormattedDecoded)
-
-  }
-
-  "MixColumn" should "succeed Decoding" in {
-
-    val bytes = new Bytes4Formatted("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp")
-    val intsFormatted = new IntsFormatted(bytes, 4)
-
-    val array256 = new Array[Byte](256)
-    for (i <- array256.indices) {
-      array256.update(i, (255 - i).toByte)
-    }
-    val table16x16 = Table16x16(array256)
-
-    val intsFormattedDecoded = Array(
-      Array(0x9e9e9e9e, 0x9d9d9d9d, 0x9c9c9c9c, 0x9b9b9b9b),
-      Array(0x9a9a9a9a, 0x99999999, 0x98989898, 0x97979797),
-      Array(0x96969696, 0x95959595, 0x94949494, 0x93939393),
-      Array(0x92929292, 0x91919191, 0x90909090, 0x8f8f8f8f)
-    )
-
-    AesTools.mixColumnDecode(intsFormatted, table16x16)
     intsFormatted() should be(intsFormattedDecoded)
 
   }
