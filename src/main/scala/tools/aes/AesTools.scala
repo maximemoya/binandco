@@ -495,22 +495,26 @@ object AesTools {
   // ---------
 
   @unused
-  def getGaloisFieldEncodeBox: Array[Array[Byte]] = {
-    Array(
-      Array(0x02.toByte, 0x03.toByte, 0x01.toByte, 0x01.toByte),
-      Array(0x01.toByte, 0x02.toByte, 0x03.toByte, 0x01.toByte),
-      Array(0x01.toByte, 0x01.toByte, 0x02.toByte, 0x03.toByte),
-      Array(0x03.toByte, 0x01.toByte, 0x01.toByte, 0x02.toByte)
+  def getGaloisFieldEncodeBox: Bytes128bits = {
+    new Bytes128bits(
+      Array(
+        0x02.toByte, 0x03.toByte, 0x01.toByte, 0x01.toByte,
+        0x01.toByte, 0x02.toByte, 0x03.toByte, 0x01.toByte,
+        0x01.toByte, 0x01.toByte, 0x02.toByte, 0x03.toByte,
+        0x03.toByte, 0x01.toByte, 0x01.toByte, 0x02.toByte
+      )
     )
   }
 
   @unused
-  def getGaloisFieldDecodeBox: Array[Array[Byte]] = {
-    Array(
-      Array(0x0e.toByte, 0x0b.toByte, 0x0d.toByte, 0x09.toByte),
-      Array(0x09.toByte, 0x0e.toByte, 0x0b.toByte, 0x0d.toByte),
-      Array(0x0d.toByte, 0x09.toByte, 0x0e.toByte, 0x0b.toByte),
-      Array(0x0b.toByte, 0x0d.toByte, 0x09.toByte, 0x0e.toByte)
+  def getGaloisFieldDecodeBox: Bytes128bits = {
+    new Bytes128bits(
+      Array(
+        0x0e.toByte, 0x0b.toByte, 0x0d.toByte, 0x09.toByte,
+        0x09.toByte, 0x0e.toByte, 0x0b.toByte, 0x0d.toByte,
+        0x0d.toByte, 0x09.toByte, 0x0e.toByte, 0x0b.toByte,
+        0x0b.toByte, 0x0d.toByte, 0x09.toByte, 0x0e.toByte
+      )
     )
   }
 
