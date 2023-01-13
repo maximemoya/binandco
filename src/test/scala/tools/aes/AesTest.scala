@@ -9,7 +9,49 @@ import scala.collection.mutable.Stack
 
 class AesTest extends AnyFlatSpec with should.Matchers {
 
-  "SubBytes" should "succeed Encoding" in {
+  // -------
+  // BYTES:
+  // ----
+
+  "ShiftRow BYTES" should "succeed Encoding" in {
+
+    val bytesBlocks = Bytes128bitsBlocks.of("abcdefghijklmnop")
+    val bytes = bytesBlocks()(0)
+
+    val bytes128bitsEncoded = Array(
+      0x61, 0x62, 0x63, 0x64,
+      0x66, 0x67, 0x68, 0x65,
+      0x6b, 0x6c, 0x69, 0x6a,
+      0x70, 0x6d, 0x6e, 0x6f
+    )
+
+    bytes.shiftRowEncode()
+    bytes() should be(bytes128bitsEncoded)
+
+  }
+
+  "ShiftRow BYTES" should "succeed Decoding" in {
+
+    val bytesBlocks = Bytes128bitsBlocks.of("abcdfgheklijpmno")
+    val bytes = bytesBlocks()(0)
+
+    val bytes128bitsEncoded = Array(
+      0x61, 0x62, 0x63, 0x64,
+      0x65, 0x66, 0x67, 0x68,
+      0x69, 0x6a, 0x6b, 0x6c,
+      0x6d, 0x6e, 0x6f, 0x70
+    )
+
+    bytes.shiftRowDecode()
+    bytes() should be(bytes128bitsEncoded)
+
+  }
+
+  // ------
+  // INTS:
+  // ----
+
+  "SubBytes INTS" should "succeed Encoding" in {
 
     val bytes = new BytesMultipleOf4("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp")
     val intsFormatted = new IntsFormatted(bytes, 4)
@@ -32,7 +74,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
 
   }
 
-  "ShiftRow" should "succeed Encoding" in {
+  "ShiftRow INTS" should "succeed Encoding" in {
 
     val bytes = new BytesMultipleOf4("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp")
     val intsFormatted = new IntsFormatted(bytes, 4)
@@ -49,7 +91,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
 
   }
 
-  "SubBytes" should "succeed Decoding" in {
+  "SubBytes INTS" should "succeed Decoding" in {
 
     val bytes = new BytesMultipleOf4("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp")
     val intsFormatted = new IntsFormatted(bytes, 4)
@@ -72,7 +114,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
 
   }
 
-  "ShiftRow" should "succeed Decoding" in {
+  "ShiftRow INTS" should "succeed Decoding" in {
 
     val bytes = new BytesMultipleOf4("aaaabbbbccccddddffffgggghhhheeeekkkklllliiiijjjjppppmmmmnnnnoooo")
     val intsFormatted = new IntsFormatted(bytes, 4)

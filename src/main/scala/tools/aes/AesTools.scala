@@ -9,6 +9,86 @@ import scala.util.Random
 private class Bytes128bits(bytes: Array[Byte]) {
   def apply(): Array[Byte] = bytes128bits
 
+  /**
+   * {{{
+   *   shift row's of bytes128bits :
+   *    from => [
+   *         0,1,2,3,
+   *         0,1,2,3, <= rotate left by 1
+   *         0,1,2,3, <= rotate left by 2
+   *         0,1,2,3  <= rotate left by 3
+   *       ]
+   *    encoded => [
+   *         0,1,2,3,
+   *         1,2,3,0,
+   *         2,3,0,1,
+   *         3,0,1,2
+   *       ]
+   * }}}
+   */
+  def shiftRowEncode(): Unit = {
+
+    val byteAt4 = this.bytes128bits(4)
+    this.bytes128bits.update(4, this.bytes128bits(5))
+    this.bytes128bits.update(5, this.bytes128bits(6))
+    this.bytes128bits.update(6, this.bytes128bits(7))
+    this.bytes128bits.update(7, byteAt4)
+
+    val byteAt8 = this.bytes128bits(8)
+    val byteAt9 = this.bytes128bits(9)
+    this.bytes128bits.update(8, this.bytes128bits(10))
+    this.bytes128bits.update(9, this.bytes128bits(11))
+    this.bytes128bits.update(10, byteAt8)
+    this.bytes128bits.update(11, byteAt9)
+
+    val byteAt15 = this.bytes128bits(15)
+    this.bytes128bits.update(15, this.bytes128bits(14))
+    this.bytes128bits.update(14, this.bytes128bits(13))
+    this.bytes128bits.update(13, this.bytes128bits(12))
+    this.bytes128bits.update(12, byteAt15)
+
+  }
+
+  /**
+   * {{{
+   *   shift row's of bytes128bits :
+   *    from => [
+   *         0,1,2,3,
+   *         1,2,3,0, => rotate right by 1
+   *         2,3,0,1, => rotate right by 2
+   *         3,0,1,2  => rotate right by 3
+   *       ]
+   *    encoded => [
+   *         0,1,2,3,
+   *         0,1,2,3,
+   *         0,1,2,3,
+   *         0,1,2,3,
+   *       ]
+   * }}}
+   */
+  def shiftRowDecode(): Unit = {
+
+    val byteAt7 = this.bytes128bits(7)
+    this.bytes128bits.update(7, this.bytes128bits(6))
+    this.bytes128bits.update(6, this.bytes128bits(5))
+    this.bytes128bits.update(5, this.bytes128bits(4))
+    this.bytes128bits.update(4, byteAt7)
+
+    val byteAt8 = this.bytes128bits(8)
+    val byteAt9 = this.bytes128bits(9)
+    this.bytes128bits.update(8, this.bytes128bits(10))
+    this.bytes128bits.update(9, this.bytes128bits(11))
+    this.bytes128bits.update(10, byteAt8)
+    this.bytes128bits.update(11, byteAt9)
+
+    val byteAt12 = this.bytes128bits(12)
+    this.bytes128bits.update(12, this.bytes128bits(13))
+    this.bytes128bits.update(13, this.bytes128bits(14))
+    this.bytes128bits.update(14, this.bytes128bits(15))
+    this.bytes128bits.update(15, byteAt12)
+
+  }
+
   private val bytes128bits = setBytes128(bytes)
 
   private def setBytes128(inputBytes: Array[Byte]) = {
@@ -51,10 +131,7 @@ private class Bytes128bitsBlocks(bytesInput: Array[Byte]) {
 
   def apply(): Array[Bytes128bits] = bytesN2
 
-  override def toString: String = bytesN2String
-
   private val bytesN2: Array[Bytes128bits] = setWithInputBytes(bytesInput)
-  private val bytesN2String = str()
 
   private def setWithInputBytes(bytesInput: Array[Byte]): Array[Bytes128bits] = {
     val bytesBlocks = new Array[Bytes128bits](((bytesInput.length - 1) / 16) + 1)
@@ -75,7 +152,7 @@ private class Bytes128bitsBlocks(bytesInput: Array[Byte]) {
     bytesBlocks
   }
 
-  private def str(): String = {
+  def printString(): Unit = {
     var str = s"n2Bytes {${this.bytesN2.length}Blocks / ${this.bytesN2.length * 16}Bytes / ${this.bytesN2.length * 128}bits}\n=> in Hexa {0xff}"
     for (blockIndex <- this.bytesN2.indices) {
       for (byteIndex <- this.bytesN2(blockIndex)().indices) {
@@ -91,7 +168,7 @@ private class Bytes128bitsBlocks(bytesInput: Array[Byte]) {
       }
     }
     str += "\n"
-    str
+    println(str)
   }
 
 }

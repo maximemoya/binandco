@@ -44,6 +44,11 @@ object Aes {
 object TryIt extends App {
   //  Aes.encodeTextWithKey("mm", "test")
   //  val bytes = Bytes128bits.of(Array(0x01.toByte,0x02.toByte,0x03.toByte,0x04.toByte))
-  val bytes = Bytes128bitsBlocks.of("abcdefghijklmnopabcdefghijklmnopabcdefghijklmnopq")
-  println(bytes)
+  //  val bytes = Bytes128bitsBlocks.of("abcdefghijklmnopabcdefghijklmnopabcdefghijklmnopq")
+  val bytesBlocks = Bytes128bitsBlocks.of("abcdefghijklmnop")
+  bytesBlocks.printString()
+  bytesBlocks()(0).shiftRowEncode()
+  bytesBlocks.printString()
+  bytesBlocks()(0).shiftRowDecode()
+  bytesBlocks.printString()
 }
