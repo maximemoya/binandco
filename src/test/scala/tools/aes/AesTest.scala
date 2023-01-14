@@ -1,9 +1,12 @@
 package fr.maxime.binandco
 package tools.aes
 
+import tools.aes.utils.Bytes128bitsBlocks
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
+import java.nio.charset.Charset
 import scala.collection.mutable
 import scala.collection.mutable.Stack
 
@@ -13,20 +16,73 @@ class AesTest extends AnyFlatSpec with should.Matchers {
   // BYTES:
   // ----
 
+  "SubBytes BYTES" should "succeed Encoding" in {
+
+    val bytesBlocks = Bytes128bitsBlocks.of("abcdefghijklmnop")
+    val bytes = bytesBlocks()(0)
+
+    val array256 = new Array[Byte](256)
+    for (i <- array256.indices) {
+      array256.update(i, (255 - i).toByte)
+    }
+    val table16x16Encode = Table16x16(array256)
+
+    val bytes128bitsEncoded = Array(
+      0x9e.toByte, 0x9d.toByte, 0x9c.toByte, 0x9b.toByte,
+      0x9a.toByte, 0x99.toByte, 0x98.toByte, 0x97.toByte,
+      0x96.toByte, 0x95.toByte, 0x94.toByte, 0x93.toByte,
+      0x92.toByte, 0x91.toByte, 0x90.toByte, 0x8f.toByte
+    )
+
+    bytes.subBytes(table16x16Encode)
+    bytes() should be(bytes128bitsEncoded)
+
+  }
+
   "ShiftRow BYTES" should "succeed Encoding" in {
 
     val bytesBlocks = Bytes128bitsBlocks.of("abcdefghijklmnop")
     val bytes = bytesBlocks()(0)
 
     val bytes128bitsEncoded = Array(
-      0x61, 0x62, 0x63, 0x64,
-      0x66, 0x67, 0x68, 0x65,
-      0x6b, 0x6c, 0x69, 0x6a,
-      0x70, 0x6d, 0x6e, 0x6f
+      0x61.toByte, 0x62.toByte, 0x63.toByte, 0x64.toByte,
+      0x66.toByte, 0x67.toByte, 0x68.toByte, 0x65.toByte,
+      0x6b.toByte, 0x6c.toByte, 0x69.toByte, 0x6a.toByte,
+      0x70.toByte, 0x6d.toByte, 0x6e.toByte, 0x6f.toByte
     )
 
     bytes.shiftRowEncode()
     bytes() should be(bytes128bitsEncoded)
+
+  }
+
+  "SubBytes BYTES" should "succeed Decoding" in {
+
+    val array256 = new Array[Byte](256)
+    for (i <- array256.indices) {
+      array256.update(i, (255 - i).toByte)
+    }
+    val table16x16Encode = Table16x16(array256)
+    val bytes128bitsEncoded = Array(
+      0x9e.toByte, 0x9d.toByte, 0x9c.toByte, 0x9b.toByte,
+      0x9a.toByte, 0x99.toByte, 0x98.toByte, 0x97.toByte,
+      0x96.toByte, 0x95.toByte, 0x94.toByte, 0x93.toByte,
+      0x92.toByte, 0x91.toByte, 0x90.toByte, 0x8f.toByte
+    )
+
+    val table16x16Decode = Table16x16.createDecodeTable16x16(table16x16Encode)
+    val bytesBlocks = Bytes128bitsBlocks.of(bytes128bitsEncoded)
+    val bytes = bytesBlocks()(0)
+
+    val bytes128bitsDecoded = Array(
+      0x61.toByte, 0x62.toByte, 0x63.toByte, 0x64.toByte,
+      0x65.toByte, 0x66.toByte, 0x67.toByte, 0x68.toByte,
+      0x69.toByte, 0x6a.toByte, 0x6b.toByte, 0x6c.toByte,
+      0x6d.toByte, 0x6e.toByte, 0x6f.toByte, 0x70.toByte
+    )
+
+    bytes.subBytes(table16x16Decode)
+    bytes() should be(bytes128bitsDecoded)
 
   }
 
@@ -35,15 +91,15 @@ class AesTest extends AnyFlatSpec with should.Matchers {
     val bytesBlocks = Bytes128bitsBlocks.of("abcdfgheklijpmno")
     val bytes = bytesBlocks()(0)
 
-    val bytes128bitsEncoded = Array(
-      0x61, 0x62, 0x63, 0x64,
-      0x65, 0x66, 0x67, 0x68,
-      0x69, 0x6a, 0x6b, 0x6c,
-      0x6d, 0x6e, 0x6f, 0x70
+    val bytes128bitsDecoded = Array(
+      0x61.toByte, 0x62.toByte, 0x63.toByte, 0x64.toByte,
+      0x65.toByte, 0x66.toByte, 0x67.toByte, 0x68.toByte,
+      0x69.toByte, 0x6a.toByte, 0x6b.toByte, 0x6c.toByte,
+      0x6d.toByte, 0x6e.toByte, 0x6f.toByte, 0x70.toByte
     )
 
     bytes.shiftRowDecode()
-    bytes() should be(bytes128bitsEncoded)
+    bytes() should be(bytes128bitsDecoded)
 
   }
 
@@ -60,7 +116,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
     for (i <- array256.indices) {
       array256.update(i, (255 - i).toByte)
     }
-    val table16x16 = Table16x16(array256)
+    val table16x16Encode = Table16x16(array256)
 
     val intsFormattedEncoded = Array(
       Array(0x9e9e9e9e, 0x9d9d9d9d, 0x9c9c9c9c, 0x9b9b9b9b),
@@ -69,7 +125,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
       Array(0x92929292, 0x91919191, 0x90909090, 0x8f8f8f8f)
     )
 
-    AesTools.subBytes(intsFormatted, table16x16)
+    AesTools.subBytes(intsFormatted, table16x16Encode)
     intsFormatted() should be(intsFormattedEncoded)
 
   }
