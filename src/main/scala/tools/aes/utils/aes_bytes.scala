@@ -26,9 +26,9 @@ import scala.annotation.unused
 private class Bytes128bits(bytes: Array[Byte]) {
   def apply(): Array[Byte] = bytes128bits
 
-  // ---------
-  // SubType:
-  // -------
+  // ----------
+  // SubBytes:
+  // --------
 
   private def transformByteAccordingTable16x16(byte: Byte, table: Table16x16): Byte = {
 
@@ -82,7 +82,7 @@ private class Bytes128bits(bytes: Array[Byte]) {
   }
 
   // ----------
-  // ShiftRow:
+  // ShiftRows:
   // --------
 
   /**
@@ -104,7 +104,7 @@ private class Bytes128bits(bytes: Array[Byte]) {
    *       ]
    * }}}
    */
-  def shiftRowEncode(): Unit = {
+  def shiftRowsEncode(): Unit = {
 
     val byteAt4 = this.bytes128bits(4)
     this.bytes128bits.update(4, this.bytes128bits(5))
@@ -146,7 +146,7 @@ private class Bytes128bits(bytes: Array[Byte]) {
    *       ]
    * }}}
    */
-  def shiftRowDecode(): Unit = {
+  def shiftRowsDecode(): Unit = {
 
     val byteAt7 = this.bytes128bits(7)
     this.bytes128bits.update(7, this.bytes128bits(6))
@@ -169,38 +169,148 @@ private class Bytes128bits(bytes: Array[Byte]) {
 
   }
 
-  // -----------
-  // MixColumn:
-  // ---------
+  // ------------
+  // MixColumns:
+  // ----------
 
-  @unused
-  def getGaloisFieldEncodeBox: Bytes128bits = {
-    new Bytes128bits(
-      Array(
-        0x02.toByte, 0x03.toByte, 0x01.toByte, 0x01.toByte,
-        0x01.toByte, 0x02.toByte, 0x03.toByte, 0x01.toByte,
-        0x01.toByte, 0x01.toByte, 0x02.toByte, 0x03.toByte,
-        0x03.toByte, 0x01.toByte, 0x01.toByte, 0x02.toByte
-      )
-    )
+  private def getPolynomial(intMax: Int, strBinMin: String): Byte = {
+
+    //    println(s"intMax    = ${String.format("%8s", (intMax & 0xff).toBinaryString).replace(' ', '0')}")
+    //    println(s"strBinMin = ${String.format("%8s", strBinMin).replace(' ', '0')}")
+
+    val numbs = new Array[Int](strBinMin.count(c => c == '1'))
+    var indexNumb = 0
+
+    for (index <- strBinMin.indices) {
+      if (strBinMin(index) == '1') {
+        val shift = strBinMin.length - 1 - index
+        val x = intMax << shift
+        numbs.update(indexNumb, x)
+        indexNumb += 1
+
+        //        println(s"at index: $index")
+        //        println(s"x = ${String.format("%32s", intMax.toBinaryString).replace(' ', '0')} << $shift")
+        //        println(s"x = ${String.format("%32s", x.toBinaryString).replace(' ', '0')}")
+
+      }
+    }
+
+    //    println("\n\t-------------\n")
+
+    var intXor = 0
+    for (i <- numbs.indices) {
+      //      println(s"intXor = ${String.format("%32s", intXor.toBinaryString).replace(' ', '0')}" +
+      //        s"\n     xor ${String.format("%32s", numbs(i).toBinaryString).replace(' ', '0')}\n")
+      intXor = intXor ^ numbs(i)
+    }
+
+    //    println(s"intXor = ${String.format("%32s", intXor.toBinaryString).replace(' ', '0')}")
+    //    println("\n\t-------------\n")
+    //    println(s"intXor       = ${String.format("%32s", intXor.toBinaryString)}")
+
+    val moduloIntXor = 0x011b
+
+    //    println(s"moduloIntXor = ${String.format("%32s", moduloIntXor.toBinaryString)}")
+
+    while (intXor.toBinaryString.length >= moduloIntXor.toBinaryString.length) {
+      val shiftLeft = intXor.toBinaryString.length - moduloIntXor.toBinaryString.length
+      //      println()
+      //      println(s"shiftLeft: $shiftLeft")
+
+      val moduloShift = moduloIntXor << shiftLeft
+
+      //      println(s"moduloShift  = ${String.format("%32s", moduloIntXor.toBinaryString)} << $shiftLeft")
+      //      println(s"moduloShift  = ${String.format("%32s", moduloShift.toBinaryString)}")
+      //      println()
+      //      println(s"intXor       = ${String.format("%32s", intXor.toBinaryString)}" +
+      //        s"\n           xor ${String.format("%32s", moduloShift.toBinaryString)}")
+
+      intXor = intXor ^ moduloShift
+
+      //      println(s"intXor       = ${String.format("%32s", intXor.toBinaryString)}")
+
+    }
+
+    //    println("\n\t-------------\n")
+    //    println(s"intXor = ${String.format("%10s", intXor.toBinaryString)}")
+    //    println(s"intXor = 0b${String.format("%8s", intXor.toBinaryString).replace(' ', '0')} 0x${String.format("%2s", intXor.toHexString).replace(' ', '0')}")
+
+    intXor.toByte
   }
 
-  @unused
-  def getGaloisFieldDecodeBox: Bytes128bits = {
-    new Bytes128bits(
-      Array(
-        0x0e.toByte, 0x0b.toByte, 0x0d.toByte, 0x09.toByte,
-        0x09.toByte, 0x0e.toByte, 0x0b.toByte, 0x0d.toByte,
-        0x0d.toByte, 0x09.toByte, 0x0e.toByte, 0x0b.toByte,
-        0x0b.toByte, 0x0d.toByte, 0x09.toByte, 0x0e.toByte
-      )
-    )
+  private def polynomialMultiplication(b1: Byte, b2: Byte): Byte = {
+
+    val strBin1: String = (0xff & b1).toBinaryString
+    val strBin2: String = (0xff & b2).toBinaryString
+
+    //    println(s"b1        = ${String.format("%8s", (b1.toInt & 0xff).toBinaryString).replace(' ', '0')}")
+    //    println(s"b2        = ${String.format("%8s", (b2.toInt & 0xff).toBinaryString).replace(' ', '0')}")
+
+    //    val b1Bin = s"${String.format("%8s", (b1.toInt & 0xff).toBinaryString).replace(' ', '0')}"
+    //    val b2Bin = s"${String.format("%8s", (b2.toInt & 0xff).toBinaryString).replace(' ', '0')}"
+    //    val b1Hex = s"${String.format("%2s", (b1.toInt & 0xff).toHexString).replace(' ', '0')}"
+    //    val b2Hex = s"${String.format("%2s", (b2.toInt & 0xff).toHexString).replace(' ', '0')}"
+
+    if ((b1 & 0xff) > (b2 & 0xff)) {
+      val byteResult = getPolynomial(b1.toInt & 0xff, strBin2)
+      //      println(s"\n$b1Bin . $b2Bin = ${String.format("%8s", (byteResult & 0xff).toBinaryString).replace(' ', '0')}")
+      //      println(s"$b1Hex . $b2Hex = ${String.format("%2s", (byteResult & 0xff).toHexString).replace(' ', '0')}")
+      byteResult
+    }
+    else {
+      val byteResult = getPolynomial(b2.toInt & 0xff, strBin1)
+      //      println(s"\n$b1Bin . $b2Bin = ${String.format("%8s", (byteResult & 0xff).toBinaryString).replace(' ', '0')}")
+      //      println(s"$b1Hex . $b2Hex = ${String.format("%2s", (byteResult & 0xff).toHexString).replace(' ', '0')}")
+      byteResult
+    }
   }
 
-  
-  def mixColumn(galoisFieldBox: Bytes128bits): Bytes128bits = {
+  private def polynomialMatrix(bytes: Bytes128bits, galoisFieldBox: Bytes128bits, index: Int): Byte = {
+    val lineA = index / 4
+    val columnA = index % 4
+    var byteA: Int = 0x00
+    for (i <- 0 until 4) {
+      byteA = byteA ^ polynomialMultiplication(galoisFieldBox.bytes128bits(lineA * 4 + i), bytes.bytes128bits(i * 4 + columnA))
+    }
+    byteA.toByte
+  }
 
-    new Bytes128bits(new Array[Byte](16))
+  def mixColumns(galoisFieldBox: Bytes128bits): Unit = {
+
+    val bytesCopy = new Array[Byte](16)
+    for (i <- this.bytes128bits.indices) {
+      bytesCopy.update(i, this.bytes128bits(i))
+    }
+    val bytes128bitsCopy = new Bytes128bits(bytesCopy)
+
+    for (i <- bytes128bits.indices) {
+      this.bytes128bits.update(i, polynomialMatrix(bytes128bitsCopy, galoisFieldBox, i))
+    }
+
+    //    println(s"bytes128bitsCopy:")
+    //    bytes128bitsCopy.printString()
+    //    println(s"\n\tmixColumn\n")
+    //    println(s"bytes128bits:")
+    //    this.printString()
+
+  }
+
+  // ---------------
+  // Other Methods:
+  // -------------
+
+  def printString(): Unit = {
+    var str = ""
+    for (byteIndex <- this.bytes128bits.indices) {
+      if (byteIndex % 4 == 0) {
+        str += s"\n\t${String.format("%02x", this.bytes128bits(byteIndex))} "
+      }
+      else {
+        str += s"${String.format("%02x", this.bytes128bits(byteIndex))} "
+      }
+    }
+    str += "\n"
+    println(str)
   }
 
   // ---------------------------------------------
@@ -223,6 +333,28 @@ private class Bytes128bits(bytes: Array[Byte]) {
     }
     bytes
   }
+}
+
+object Bytes128bits {
+
+  val galoisFieldEncodeBox: Bytes128bits = new Bytes128bits(
+    Array(
+      0x02.toByte, 0x03.toByte, 0x01.toByte, 0x01.toByte,
+      0x01.toByte, 0x02.toByte, 0x03.toByte, 0x01.toByte,
+      0x01.toByte, 0x01.toByte, 0x02.toByte, 0x03.toByte,
+      0x03.toByte, 0x01.toByte, 0x01.toByte, 0x02.toByte
+    )
+  )
+
+  val galoisFieldDecodeBox: Bytes128bits = new Bytes128bits(
+    Array(
+      0x0e.toByte, 0x0b.toByte, 0x0d.toByte, 0x09.toByte,
+      0x09.toByte, 0x0e.toByte, 0x0b.toByte, 0x0d.toByte,
+      0x0d.toByte, 0x09.toByte, 0x0e.toByte, 0x0b.toByte,
+      0x0b.toByte, 0x0d.toByte, 0x09.toByte, 0x0e.toByte
+    )
+  )
+
 }
 
 /**

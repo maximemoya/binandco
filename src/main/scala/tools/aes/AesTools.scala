@@ -1,6 +1,8 @@
 package fr.maxime.binandco
 package tools.aes
 
+import tools.aes.utils.Bytes128bits
+
 import java.nio.charset.Charset
 import scala.annotation.unused
 import scala.compiletime.ops.boolean.||
@@ -165,7 +167,7 @@ class Table16x16(array256Bytes: Array[Byte]) {
 }
 
 object Table16x16 {
-  
+
   def createEncodeTable16x16Random(): Table16x16 = {
     val arrLength = 16 * 16
     val array = new Array[Byte](arrLength)
@@ -189,7 +191,7 @@ object Table16x16 {
     }
     new Table16x16(array)
   }
-  
+
 }
 
 object AesTools {

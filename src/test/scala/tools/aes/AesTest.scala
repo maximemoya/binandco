@@ -1,7 +1,7 @@
 package fr.maxime.binandco
 package tools.aes
 
-import tools.aes.utils.Bytes128bitsBlocks
+import tools.aes.utils.{Bytes128bits, Bytes128bitsBlocks}
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
@@ -39,7 +39,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
 
   }
 
-  "ShiftRow BYTES" should "succeed Encoding" in {
+  "ShiftRows BYTES" should "succeed Encoding" in {
 
     val bytesBlocks = Bytes128bitsBlocks.of("abcdefghijklmnop")
     val bytes = bytesBlocks()(0)
@@ -51,9 +51,31 @@ class AesTest extends AnyFlatSpec with should.Matchers {
       0x70.toByte, 0x6d.toByte, 0x6e.toByte, 0x6f.toByte
     )
 
-    bytes.shiftRowEncode()
+    bytes.shiftRowsEncode()
     bytes() should be(bytes128bitsEncoded)
 
+  }
+
+  "mixColumns BYTES" should "succeed Encoding" in {
+
+    val bytesBlocks = Bytes128bitsBlocks.of(Array(
+      0x87.toByte, 0xf2.toByte, 0x4d.toByte, 0x97.toByte,
+      0x6e.toByte, 0x4c.toByte, 0x90.toByte, 0xec.toByte,
+      0x46.toByte, 0xe7.toByte, 0x4a.toByte, 0xc3.toByte,
+      0xa6.toByte, 0x8c.toByte, 0xd8.toByte, 0x95.toByte
+    ))
+    val bytes = bytesBlocks()(0)
+    val galoisFieldEncode = Bytes128bits.galoisFieldEncodeBox
+
+    val bytes128bitsEncoded = Array(
+      0x47.toByte, 0x40.toByte, 0xa3.toByte, 0x4c.toByte,
+      0x37.toByte, 0xd4.toByte, 0x70.toByte, 0x9f.toByte,
+      0x94.toByte, 0xe4.toByte, 0x3a.toByte, 0x42.toByte,
+      0xed.toByte, 0xa5.toByte, 0xa6.toByte, 0xbc.toByte
+    )
+
+    bytes.mixColumns(galoisFieldEncode)
+    bytes() should be(bytes128bitsEncoded)
   }
 
   "SubBytes BYTES" should "succeed Decoding" in {
@@ -86,7 +108,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
 
   }
 
-  "ShiftRow BYTES" should "succeed Decoding" in {
+  "ShiftRows BYTES" should "succeed Decoding" in {
 
     val bytesBlocks = Bytes128bitsBlocks.of("abcdfgheklijpmno")
     val bytes = bytesBlocks()(0)
@@ -98,9 +120,31 @@ class AesTest extends AnyFlatSpec with should.Matchers {
       0x6d.toByte, 0x6e.toByte, 0x6f.toByte, 0x70.toByte
     )
 
-    bytes.shiftRowDecode()
+    bytes.shiftRowsDecode()
     bytes() should be(bytes128bitsDecoded)
 
+  }
+
+  "mixColumns BYTES" should "succeed Decoding" in {
+
+    val bytesBlocks = Bytes128bitsBlocks.of(Array(
+      0x47.toByte, 0x40.toByte, 0xa3.toByte, 0x4c.toByte,
+      0x37.toByte, 0xd4.toByte, 0x70.toByte, 0x9f.toByte,
+      0x94.toByte, 0xe4.toByte, 0x3a.toByte, 0x42.toByte,
+      0xed.toByte, 0xa5.toByte, 0xa6.toByte, 0xbc.toByte
+    ))
+    val bytes = bytesBlocks()(0)
+    val galoisFieldDecode = Bytes128bits.galoisFieldDecodeBox
+
+    val bytes128bitsDecoded = Array(
+      0x87.toByte, 0xf2.toByte, 0x4d.toByte, 0x97.toByte,
+      0x6e.toByte, 0x4c.toByte, 0x90.toByte, 0xec.toByte,
+      0x46.toByte, 0xe7.toByte, 0x4a.toByte, 0xc3.toByte,
+      0xa6.toByte, 0x8c.toByte, 0xd8.toByte, 0x95.toByte
+    )
+
+    bytes.mixColumns(galoisFieldDecode)
+    bytes() should be(bytes128bitsDecoded)
   }
 
   // ------
