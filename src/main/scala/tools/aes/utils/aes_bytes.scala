@@ -2,6 +2,7 @@ package fr.maxime.binandco
 package tools.aes.utils
 
 import tools.aes.Table16x16
+import tools.aes.Table16x16.transformByteAccordingTable16x16
 
 import java.nio.charset.Charset
 import scala.annotation.unused
@@ -29,26 +30,6 @@ private class Bytes128bits(bytes: Array[Byte]) {
   // ----------
   // SubBytes:
   // --------
-
-  private def transformByteAccordingTable16x16(byte: Byte, table: Table16x16): Byte = {
-
-    //    val str = String.format("%02x", byte)
-    //    val line = Integer.parseInt(str(0).toString, 16)
-    //    val column = Integer.parseInt(str(1).toString, 16)
-    //
-    //    println(s"byte= $byte | 0x${String.format("%02x", byte)}")
-    //    println(s"str= \"$str\"")
-    //    println(s"line= ${line + 1}")
-    //    println(s"column= ${column + 1}")
-
-    var indexToReach: Int = byte
-    if (byte < 0) indexToReach = byte + 256
-
-    //    println(s"arr($indexToReach)=${String.format("%02x", table.get(indexToReach))}")
-
-    table.get(indexToReach)
-
-  }
 
   /**
    * Convert Byte by Byte the Bytes128bits with Table16x16
@@ -381,6 +362,8 @@ private class Bytes128bitsBlocks(bytesInput: Array[Byte]) {
 
   def apply(): Array[Bytes128bits] = bytesN2
 
+  def apply(blockIndex: Int): Bytes128bits = bytesN2(blockIndex)
+
   def get(): Array[Bytes128bits] = bytesN2
 
   def get(blockIndex: Int): Bytes128bits = bytesN2(blockIndex)
@@ -436,24 +419,4 @@ object Bytes128bitsBlocks {
     new Bytes128bitsBlocks(binaries)
   }
 
-}
-
-def getRoundConstants: Array[Int] = {
-Array(
-    0x01000000,
-    0x02000000,
-    0x04000000,
-    0x08000000,
-    0x10000000,
-    0x20000000,
-    0x40000000,
-    0x80000000,
-    0x1B000000,
-    0x36000000,
-    0x6C000000,
-    0xD8000000,
-    0xAB000000,
-    0x4D000000,
-    0x9A000000,
-  )
 }
