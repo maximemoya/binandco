@@ -25,32 +25,25 @@ class KeyExpansionAes128Test extends AnyFlatSpec with should.Matchers {
   "keyExpansion" should "succeed" in {
 
     val sBox = Table16x16.getAesSubstitutionBOX
-    val bytesBlocks = Bytes128bitsBlocks.of(Array[Byte](
-      0x0f, 0x15, 0x71, 0xc9.toByte,
-      0x47, 0xd9.toByte, 0xe8.toByte, 0x59,
-      0x0c, 0xb7.toByte, 0xad.toByte, 0xd6.toByte,
-      0xaf.toByte, 0x7f, 0x67.toByte, 0x98.toByte,
-    ))
+    val bytesBlocks = Bytes128bitsBlocks.of("Thats my Kung Fu")
     val bytes128bits = bytesBlocks(0)
 
-    val word_04 = 0xdc9037b0
-    val word_05 = 0x9b49dfe9
-    val word_06 = 0x97fe723f
-    val word_07 = 0x388115a7
-    val word_40 = 0xb48ef352
-    val word_41 = 0xba98134e
-    val word_42 = 0x7f4d5920
-    val word_43 = 0x86261876
+    val round_01 = Array(
+      0xe291b1d6,
+      0x32125979,
+      0xfc91e4a2,
+      0xf188e693
+    )
+    val round_10 = Array(
+      0x286dcc3b,
+      0xfda4c031,
+      0xde24a46f,
+      0xf84afe26
+    )
 
     val keyExpansionTest = keyExpansionAES128(bytes128bits, sBox)
-    keyExpansionTest(4) should be(word_04)
-    keyExpansionTest(5) should be(word_05)
-    keyExpansionTest(6) should be(word_06)
-    keyExpansionTest(7) should be(word_07)
-    keyExpansionTest(40) should be(word_40)
-    keyExpansionTest(41) should be(word_41)
-    keyExpansionTest(42) should be(word_42)
-    keyExpansionTest(43) should be(word_43)
+    keyExpansionTest(1) should be(round_01)
+    keyExpansionTest(10) should be(round_10)
 
   }
 

@@ -27,6 +27,19 @@ import scala.annotation.unused
 private class Bytes128bits(bytes: Array[Byte]) {
   def apply(): Array[Byte] = bytes128bits
 
+  // -------------
+  // addRoundKey:
+  // -----------
+
+  def addRoundKey(keyExpansion: Array[Array[Int]], round: Int): Unit = {
+    val keyArray = keyExpansion(round)
+    for (i <- bytes128bits.indices) {
+      println(s"bytes128 = ${bytes128bits(i).toInt.toHexString} | key = ${intToByte(keyArray(i / 4), i % 4).toInt.toHexString}")
+      val value = (bytes128bits(i) ^ intToByte(keyArray(i / 4), i % 4)).toByte
+      bytes128bits.update(i, value)
+    }
+  }
+
   // ----------
   // SubBytes:
   // --------
@@ -47,10 +60,10 @@ private class Bytes128bits(bytes: Array[Byte]) {
    *
    *      Bytes128bits = 0x[ 04, d6, f1, 05, ...]
    *
-   *      SubType 0x'04' by Table16x16 => 0x'00'
-   *      SubType 0x'd6' by Table16x16 => 0x'01'
-   *      SubType 0x'f1' by Table16x16 => 0x'10'
-   *      SubType 0x'05' by Table16x16 => 0x'22'
+   *      SubByte 0x'04' by Table16x16 => 0x'00'
+   *      SubByte 0x'd6' by Table16x16 => 0x'01'
+   *      SubByte 0x'f1' by Table16x16 => 0x'10'
+   *      SubByte 0x'05' by Table16x16 => 0x'22'
    *
    * }}}
    *
@@ -246,17 +259,17 @@ private class Bytes128bits(bytes: Array[Byte]) {
     }
   }
 
-  private def polynomialMatrix(bytes: Bytes128bits, galoisFieldBox: Bytes128bits, index: Int): Byte = {
+  private def polynomialMatrix(bytes: Bytes128bits, galoisFieldBox: Array[Byte], index: Int): Byte = {
     val lineA = index / 4
     val columnA = index % 4
     var byteA: Int = 0x00
     for (i <- 0 until 4) {
-      byteA = byteA ^ polynomialMultiplication(galoisFieldBox.bytes128bits(lineA * 4 + i), bytes.bytes128bits(i * 4 + columnA))
+      byteA = byteA ^ polynomialMultiplication(galoisFieldBox(lineA * 4 + i), bytes.bytes128bits(i * 4 + columnA))
     }
     byteA.toByte
   }
 
-  def mixColumns(galoisFieldBox: Bytes128bits): Unit = {
+  def mixColumns(galoisFieldBox: Array[Byte]): Unit = {
 
     val bytesCopy = new Array[Byte](16)
     for (i <- this.bytes128bits.indices) {
@@ -302,39 +315,47 @@ private class Bytes128bits(bytes: Array[Byte]) {
 
   private def setBytes128(inputBytes: Array[Byte]) = {
     val bytes = new Array[Byte](16)
-    if (inputBytes.length >= 16) {
-      for (i <- bytes.indices) {
-        bytes.update(i, inputBytes(i))
-      }
-    }
-    else {
-      for (i <- inputBytes.indices) {
-        bytes.update(i, inputBytes(i))
-      }
-    }
+    bytes.update(0, inputBytes(0))
+    bytes.update(1, inputBytes(4))
+    bytes.update(2, inputBytes(8))
+    bytes.update(3, inputBytes(12))
+
+    bytes.update(4, inputBytes(1))
+    bytes.update(5, inputBytes(5))
+    bytes.update(6, inputBytes(9))
+    bytes.update(7, inputBytes(13))
+
+    bytes.update(8, inputBytes(2))
+    bytes.update(9, inputBytes(6))
+    bytes.update(10, inputBytes(10))
+    bytes.update(11, inputBytes(14))
+
+    bytes.update(12, inputBytes(3))
+    bytes.update(13, inputBytes(7))
+    bytes.update(14, inputBytes(11))
+    bytes.update(15, inputBytes(15))
     bytes
   }
+
 }
 
 object Bytes128bits {
 
-  val galoisFieldEncodeBox: Bytes128bits = new Bytes128bits(
+  val galoisFieldEncodeBox: Array[Byte] =
     Array(
       0x02.toByte, 0x03.toByte, 0x01.toByte, 0x01.toByte,
       0x01.toByte, 0x02.toByte, 0x03.toByte, 0x01.toByte,
       0x01.toByte, 0x01.toByte, 0x02.toByte, 0x03.toByte,
       0x03.toByte, 0x01.toByte, 0x01.toByte, 0x02.toByte
     )
-  )
 
-  val galoisFieldDecodeBox: Bytes128bits = new Bytes128bits(
+  val galoisFieldDecodeBox: Array[Byte] =
     Array(
       0x0e.toByte, 0x0b.toByte, 0x0d.toByte, 0x09.toByte,
       0x09.toByte, 0x0e.toByte, 0x0b.toByte, 0x0d.toByte,
       0x0d.toByte, 0x09.toByte, 0x0e.toByte, 0x0b.toByte,
       0x0b.toByte, 0x0d.toByte, 0x09.toByte, 0x0e.toByte
     )
-  )
 
 }
 

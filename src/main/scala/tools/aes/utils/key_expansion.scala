@@ -3,7 +3,7 @@ package tools.aes.utils
 
 import tools.aes.Table16x16
 
-def keyExpansionAES128(bytes128bits: Bytes128bits, table16x16: Table16x16): Array[Int] = {
+def keyExpansionAES128(bytes128bits: Bytes128bits, table16x16: Table16x16): Array[Array[Int]] = {
   val bytes = bytes128bits.apply()
   val bytesW1 = Array[Byte](bytes(0), bytes(1), bytes(2), bytes(3))
   val word1: Int = BigInt.apply(bytesW1).toInt
@@ -40,7 +40,58 @@ def keyExpansionAES128(bytes128bits: Bytes128bits, table16x16: Table16x16): Arra
 
   }
 
-  arrayKeyExpansion
+  val arrayKeyExpansionReversed = new Array[Int](arrayKeyExpansion.length)
+  for (i <- arrayKeyExpansionReversed.indices) {
+    if (i % 4 == 0) {
+      val b0 = intToByte(arrayKeyExpansion(i), 0)
+      val b1 = intToByte(arrayKeyExpansion(i + 1), 0)
+      val b2 = intToByte(arrayKeyExpansion(i + 2), 0)
+      val b3 = intToByte(arrayKeyExpansion(i + 3), 0)
+      val arr = Array[Byte](b0, b1, b2, b3)
+      arrayKeyExpansionReversed.update(i, BigInt.apply(arr).toInt)
+    }
+    else if (i % 4 == 1) {
+      val b0 = intToByte(arrayKeyExpansion(i - 1), 1)
+      val b1 = intToByte(arrayKeyExpansion(i), 1)
+      val b2 = intToByte(arrayKeyExpansion(i + 1), 1)
+      val b3 = intToByte(arrayKeyExpansion(i + 2), 1)
+      val arr = Array[Byte](b0, b1, b2, b3)
+      arrayKeyExpansionReversed.update(i, BigInt.apply(arr).toInt)
+    }
+    else if (i % 4 == 2) {
+      val b0 = intToByte(arrayKeyExpansion(i - 2), 2)
+      val b1 = intToByte(arrayKeyExpansion(i - 1), 2)
+      val b2 = intToByte(arrayKeyExpansion(i), 2)
+      val b3 = intToByte(arrayKeyExpansion(i + 1), 2)
+      val arr = Array[Byte](b0, b1, b2, b3)
+      arrayKeyExpansionReversed.update(i, BigInt.apply(arr).toInt)
+    }
+    else if (i % 4 == 3) {
+      val b0 = intToByte(arrayKeyExpansion(i - 3), 3)
+      val b1 = intToByte(arrayKeyExpansion(i - 2), 3)
+      val b2 = intToByte(arrayKeyExpansion(i - 1), 3)
+      val b3 = intToByte(arrayKeyExpansion(i), 3)
+      val arr = Array[Byte](b0, b1, b2, b3)
+      arrayKeyExpansionReversed.update(i, BigInt.apply(arr).toInt)
+    }
+  }
+
+//    println("arrayKeyExpansion:")
+//    println(s"${arrayKeyExpansion.map(x => String.format("0x-%8s", x.toHexString).replace(" ","0")).mkString("\n")}")
+//    println("arrayKeyExpansionReversed:")
+//    println(s"${arrayKeyExpansionReversed.map(x => String.format("0x-%8s", x.toHexString).replace(" ", "0")).mkString("\n")}")
+
+  val arrayKeyExpansionReversedN2 = new Array[Array[Int]](11)
+  for (i <- arrayKeyExpansionReversedN2.indices) {
+    arrayKeyExpansionReversedN2.update(i, Array(
+      arrayKeyExpansion(i * 4),
+      arrayKeyExpansion(i * 4 + 1),
+      arrayKeyExpansion(i * 4 + 2),
+      arrayKeyExpansion(i * 4 + 3)
+    ))
+  }
+
+  arrayKeyExpansionReversedN2
 
 }
 
