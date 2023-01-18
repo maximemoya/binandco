@@ -34,7 +34,7 @@ private class Bytes128bits(bytes: Array[Byte]) {
   def addRoundKey(keyExpansion: Array[Array[Int]], round: Int): Unit = {
     val keyArray = keyExpansion(round)
     for (i <- bytes128bits.indices) {
-      println(s"bytes128 = ${bytes128bits(i).toInt.toHexString} | key = ${intToByte(keyArray(i / 4), i % 4).toInt.toHexString}")
+      println(s"bytes128 = ${bytes128bits(i).toInt.toHexString} | key = ${intToByte(keyArray(i/4), i % 4).toInt.toHexString}")
       val value = (bytes128bits(i) ^ intToByte(keyArray(i / 4), i % 4)).toByte
       bytes128bits.update(i, value)
     }
@@ -80,7 +80,7 @@ private class Bytes128bits(bytes: Array[Byte]) {
   // --------
 
   /**
-   * {{{
+   * {{{]
    *   shift row's of bytes128bits :
    *    from =>
    *      0x[
@@ -259,26 +259,30 @@ private class Bytes128bits(bytes: Array[Byte]) {
     }
   }
 
-  private def polynomialMatrix(bytes: Bytes128bits, galoisFieldBox: Array[Byte], index: Int): Byte = {
+  private def polynomialMatrix(bytes: Array[Byte], galoisFieldBox: Array[Byte], index: Int): Byte = {
     val lineA = index / 4
     val columnA = index % 4
     var byteA: Int = 0x00
     for (i <- 0 until 4) {
-      byteA = byteA ^ polynomialMultiplication(galoisFieldBox(lineA * 4 + i), bytes.bytes128bits(i * 4 + columnA))
+      println(s"galoisFieldBox ^ byte = ${galoisFieldBox(lineA * 4 + i).toInt.toHexString} ^ ${bytes(i * 4 + columnA).toInt.toHexString}")
+      byteA = byteA ^ polynomialMultiplication(galoisFieldBox(lineA * 4 + i), bytes(i * 4 + columnA))
     }
     byteA.toByte
   }
 
   def mixColumns(galoisFieldBox: Array[Byte]): Unit = {
 
+    println("mixColumns")
+    println(bytes128bits.map(i => i.toInt.toHexString).mkString(" "))
+    this.printString()
+
     val bytesCopy = new Array[Byte](16)
     for (i <- this.bytes128bits.indices) {
       bytesCopy.update(i, this.bytes128bits(i))
     }
-    val bytes128bitsCopy = new Bytes128bits(bytesCopy)
 
     for (i <- bytes128bits.indices) {
-      this.bytes128bits.update(i, polynomialMatrix(bytes128bitsCopy, galoisFieldBox, i))
+      this.bytes128bits.update(i, polynomialMatrix(bytesCopy, galoisFieldBox, i))
     }
 
     //    println(s"bytes128bitsCopy:")
@@ -292,6 +296,32 @@ private class Bytes128bits(bytes: Array[Byte]) {
   // ---------------
   // Other Methods:
   // -------------
+
+  def reverseBytes128(): Unit = {
+    val copyBytes = new Array[Byte](16)
+    for (i <- this.bytes128bits.indices) {
+      copyBytes.update(i, this.bytes128bits(i))
+    }
+    this.bytes128bits.update(0, copyBytes(0))
+    this.bytes128bits.update(1, copyBytes(4))
+    this.bytes128bits.update(2, copyBytes(8))
+    this.bytes128bits.update(3, copyBytes(12))
+
+    this.bytes128bits.update(4, copyBytes(1))
+    this.bytes128bits.update(5, copyBytes(5))
+    this.bytes128bits.update(6, copyBytes(9))
+    this.bytes128bits.update(7, copyBytes(13))
+
+    this.bytes128bits.update(8, copyBytes(2))
+    this.bytes128bits.update(9, copyBytes(6))
+    this.bytes128bits.update(10, copyBytes(10))
+    this.bytes128bits.update(11, copyBytes(14))
+
+    this.bytes128bits.update(12, copyBytes(3))
+    this.bytes128bits.update(13, copyBytes(7))
+    this.bytes128bits.update(14, copyBytes(11))
+    this.bytes128bits.update(15, copyBytes(15))
+  }
 
   def printString(): Unit = {
     var str = ""
@@ -313,33 +343,52 @@ private class Bytes128bits(bytes: Array[Byte]) {
 
   private val bytes128bits = setBytes128(bytes)
 
-  private def setBytes128(inputBytes: Array[Byte]) = {
-    val bytes = new Array[Byte](16)
-    bytes.update(0, inputBytes(0))
-    bytes.update(1, inputBytes(4))
-    bytes.update(2, inputBytes(8))
-    bytes.update(3, inputBytes(12))
-
-    bytes.update(4, inputBytes(1))
-    bytes.update(5, inputBytes(5))
-    bytes.update(6, inputBytes(9))
-    bytes.update(7, inputBytes(13))
-
-    bytes.update(8, inputBytes(2))
-    bytes.update(9, inputBytes(6))
-    bytes.update(10, inputBytes(10))
-    bytes.update(11, inputBytes(14))
-
-    bytes.update(12, inputBytes(3))
-    bytes.update(13, inputBytes(7))
-    bytes.update(14, inputBytes(11))
-    bytes.update(15, inputBytes(15))
-    bytes
+  private def setBytes128(bytes: Array[Byte]) = {
+    if (bytes.length == 16) {
+      bytes
+    }
+    else {
+      throw Error("Bytes128bits().setBytes128(bytes) => bytes.length > 16")
+    }
   }
 
 }
 
 object Bytes128bits {
+
+  def of(array16: Array[Byte]): Bytes128bits = {
+    Bytes128bits(array16)
+  }
+
+  def of(text: String): Bytes128bits = {
+    if (text != null) {
+      val inputBytes = text.getBytes
+      val bytes = new Array[Byte](16)
+      bytes.update(0, inputBytes(0))
+      bytes.update(1, inputBytes(4))
+      bytes.update(2, inputBytes(8))
+      bytes.update(3, inputBytes(12))
+
+      bytes.update(4, inputBytes(1))
+      bytes.update(5, inputBytes(5))
+      bytes.update(6, inputBytes(9))
+      bytes.update(7, inputBytes(13))
+
+      bytes.update(8, inputBytes(2))
+      bytes.update(9, inputBytes(6))
+      bytes.update(10, inputBytes(10))
+      bytes.update(11, inputBytes(14))
+
+      bytes.update(12, inputBytes(3))
+      bytes.update(13, inputBytes(7))
+      bytes.update(14, inputBytes(11))
+      bytes.update(15, inputBytes(15))
+      Bytes128bits(bytes)
+    }
+    else {
+      throw Error("Bytes128bits(text) => text = null")
+    }
+  }
 
   val galoisFieldEncodeBox: Array[Byte] =
     Array(
@@ -405,7 +454,9 @@ private class Bytes128bitsBlocks(bytesInput: Array[Byte]) {
           bytes.update(byteIndex, bytesInput(blockIndex * 16 + byteIndex))
         }
       }
-      bytesBlocks.update(blockIndex, new Bytes128bits(bytes))
+      val newBytes = Bytes128bits.of(bytes)
+      newBytes.reverseBytes128()
+      bytesBlocks.update(blockIndex, newBytes)
     }
     bytesBlocks
   }

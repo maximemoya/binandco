@@ -25,8 +25,9 @@ class KeyExpansionAes128Test extends AnyFlatSpec with should.Matchers {
   "keyExpansion" should "succeed" in {
 
     val sBox = Table16x16.getAesSubstitutionBOX
-    val bytesBlocks = Bytes128bitsBlocks.of("Thats my Kung Fu")
-    val bytes128bits = bytesBlocks(0)
+    //    val bytesBlocks = Bytes128bitsBlocks.of("Thats my Kung Fu")
+    val bytesKey = "Thats my Kung Fu".getBytes
+    val bytes128bits = bytesKey
 
     val round_01 = Array(
       0xe291b1d6,
