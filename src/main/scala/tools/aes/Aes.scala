@@ -20,8 +20,8 @@ object Aes {
     //    val bytesBlock = Bytes128bitsBlocks.of(bytes)
 
     //    val bytesBlockKey = Bytes128bitsBlocks.of("Thats my Kung Fu")
-    val bytesKey = Bytes128bits.of("Thats my Kung Fu")
-    val keyExpansion = keyExpansionAES128(bytesKey(), Table16x16.getAesSubstitutionBOX)
+    val bytesKey = "Thats my Kung Fu".getBytes
+    val keyExpansion = keyExpansionAES128(bytesKey, Table16x16.getAesSubstitutionBOX)
 
     val bytesBlock = Bytes128bitsBlocks.of("Two One Nine Two")
 

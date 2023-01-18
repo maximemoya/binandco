@@ -455,7 +455,7 @@ private class Bytes128bitsBlocks(bytesInput: Array[Byte]) {
         }
       }
       val newBytes = Bytes128bits.of(bytes)
-      newBytes.reverseBytes128()
+//      newBytes.reverseBytes128()
       bytesBlocks.update(blockIndex, newBytes)
     }
     bytesBlocks
