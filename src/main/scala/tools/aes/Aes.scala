@@ -23,7 +23,7 @@ object Aes {
     val bytesKey = "Thats my Kung Fu".getBytes
     val keyExpansion = keyExpansionAES128(bytesKey, Table16x16.getAesSubstitutionBOX)
 
-    val bytesBlock = Bytes128bitsBlocks.of("Two One Nine Two")
+    val bytesBlock = Bytes128bitsBlocks.of(Bytes128bits.of("Two One Nine Two")())
 
     val table16x16Encode = Table16x16.getAesSubstitutionBOX
     val galoisFieldEncode = Bytes128bits.galoisFieldEncodeBox
