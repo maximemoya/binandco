@@ -34,7 +34,7 @@ private class Bytes128bits(bytes: Array[Byte]) {
   def addRoundKey(keyExpansion: Array[Array[Int]], round: Int): Unit = {
     val keyArray = keyExpansion(round)
     for (i <- bytes128bits.indices) {
-      println(s"bytes128 = ${bytes128bits(i).toInt.toHexString} | key = ${intToByte(keyArray(i/4), i % 4).toInt.toHexString}")
+      println(s"bytes128 = ${bytes128bits(i).toInt.toHexString} | key = ${intToByte(keyArray(i / 4), i % 4).toInt.toHexString}")
       val value = (bytes128bits(i) ^ intToByte(keyArray(i / 4), i % 4)).toByte
       bytes128bits.update(i, value)
     }
@@ -80,7 +80,7 @@ private class Bytes128bits(bytes: Array[Byte]) {
   // --------
 
   /**
-   * {{{]
+   * {{{
    *   shift row's of bytes128bits :
    *    from =>
    *      0x[
@@ -232,6 +232,48 @@ private class Bytes128bits(bytes: Array[Byte]) {
     intXor.toByte
   }
 
+  /**
+   * {{{
+   *   polynomial calculation of Bytes modulo 0x011b
+   *
+   *      BytesA: 0b11111111
+   *        => X^7 + X^6 + X^5 + X^4 + X^3 + X^2 + X + 1
+   *      BytesB: 0b00000110
+   *        => X^2 + X
+   *
+   *      A.B =
+   *          ( X^7 + X^6 + X^5 + X^4 + X^3 + X^2 + X + 1 ) * X^2
+   *        + ( X^7 + X^6 + X^5 + X^4 + X^3 + X^2 + X + 1 ) * X
+   *        = X^9 + 2X^8 + 2X^7 + 2X^6 + 2X^5 + 2X^4 + 2X^3 + 2X^2 + X
+   *      factors modulo 2 (1 or 0)
+   *        = X^9 + X
+   *      equation modulo 0x011b <=> X^8 + X^4 + X^3 + X + 1
+   *        = X^9 + X - ( X^8 + X^4 + X^3 + X + 1 ) * X
+   *        = X^9 + X - ( X^9 + X^5 + X^4 + X^2 + X )
+   *        = - X^5 - X^4 - X^2
+   *      absolute factors
+   *        = X^5 + X^4 + X^2
+   *
+   *      A.B =
+   *          0b11111111 << 2
+   *      XOR 0b11111111 << 1
+   *        =
+   *          0b1111111100
+   *      XOR 0b0111111110
+   *        = 0b1000000010
+   *    equation modulo 0x011b <=> 0b100011011
+   *        = 0b1000000010
+   *      XOR 0b1000110110 (0b100011011 << 1)
+   *        = 0b0000110100
+   *
+   *      A.B = X^5 + X^4 + X^2 = 0b110100
+   *
+   * }}}
+   *
+   * @param b1 A Byte (8bits)
+   * @param b2 A Byte (8bits)
+   * @return A Byte (8bits)
+   */
   private def polynomialMultiplication(b1: Byte, b2: Byte): Byte = {
 
     val strBin1: String = (0xff & b1).toBinaryString
@@ -259,6 +301,69 @@ private class Bytes128bits(bytes: Array[Byte]) {
     }
   }
 
+  /**
+   * sign " . " is a [[polynomialMultiplication polynomialMultiplication]]
+   * {{{
+   *
+   *     galoisFieldBox . bytes =
+   *
+   *       02 03 01 01     00 01 02 03
+   *       01 02 03 01     04 05 06 07
+   *       01 01 02 03     08 09 0a 0b
+   *       03 01 01 02  .  0c 0d 0e 0f
+   *
+   *       cell calculation: ( MatrixMultiplication : line x column )
+   *
+   *        for Bytes(0) actual 0x00
+   *
+   *        new Bytes(0) = ( 0x02.0x00 ) ^ ( 0x03.0x04 ) ^ ( 0x01.0x08 ) ^ ( 0x01.0x0c )
+   *                     =      0x00     ^      0x0c     ^      0x08     ^     0x0c
+   *                 <=>
+   *                     0b00000000
+   *                 XOR 0b00001100
+   *                 XOR 0b00001000
+   *                 XOR 0b00001100
+   *                   = 0b00001000
+   *                   = 0x08
+   *
+   *        for Bytes(1) actual 0x01
+   *
+   *        new Bytes(1) = ( 0x02.0x01 ) ^ ( 0x03.0x05 ) ^ ( 0x01.0x09 ) ^ ( 0x01.0x0d )
+   *                     =      0x02     ^      0x0f     ^      0x09     ^     0x0d
+   *                 <=>
+   *                     0b00000010
+   *                 XOR 0b00001111
+   *                 XOR 0b00001001
+   *                 XOR 0b00001101
+   *                   = 0b00001001
+   *                   = 0x09
+   *
+   *        for Bytes(10) actual 0x0a
+   *
+   *        new Bytes(10) = ( 0x01.0x02 ) ^ ( 0x01.0x06 ) ^ ( 0x02.0x0a ) ^ ( 0x03.0x0e )
+   *                     =      0x02     ^      0x06     ^      0x14     ^     0x12
+   *                 <=>
+   *                     0b00000010
+   *                 XOR 0b00000110
+   *                 XOR 0b00010100
+   *                 XOR 0b00010010
+   *                   = 0b00000010
+   *                   = 0x02
+   *
+   *     newBytes =
+   *
+   *       08 09 0a 0b
+   *       1c 1d 1e 1f
+   *       00 01 02 03
+   *       14 15 16 17
+   *
+   * }}}
+   *
+   * @param bytes          An Array of 16 Bytes (128bits)
+   * @param galoisFieldBox An Array of 16 Bytes (128bits)
+   * @param index          An Integer (32bits)
+   * @return A Byte (8bits)
+   */
   private def polynomialMatrix(bytes: Array[Byte], galoisFieldBox: Array[Byte], index: Int): Byte = {
     val lineA = index / 4
     val columnA = index % 4
@@ -270,6 +375,15 @@ private class Bytes128bits(bytes: Array[Byte]) {
     byteA.toByte
   }
 
+  /**
+   * - step1 : polynomial calculation of Bytes modulo 0x011b
+   *   - See also [[polynomialMultiplication polynomialMultiplication_method]].
+   *
+   * - step2 : polynomial calculation of MatrixBytes of 16 Bytes (128bits)
+   *   - See also [[polynomialMatrix polynomialMatrix_method]]
+   *
+   * @param galoisFieldBox An Array of 16 Bytes (256bits)
+   */
   def mixColumns(galoisFieldBox: Array[Byte]): Unit = {
 
     println("mixColumns")
@@ -428,7 +542,7 @@ object Bytes128bits {
  *
  * @param bytesInput Array of Bytes
  */
-private class Bytes128bitsBlocks(bytesInput: Array[Byte]) {
+private class Bytes128bitsBlocks(bytesInput: Array[Byte], fromString: Boolean = false) {
 
   def apply(): Array[Bytes128bits] = bytesN2
 
@@ -455,7 +569,9 @@ private class Bytes128bitsBlocks(bytesInput: Array[Byte]) {
         }
       }
       val newBytes = Bytes128bits.of(bytes)
-//      newBytes.reverseBytes128()
+
+      if (fromString) newBytes.reverseBytes128()
+
       bytesBlocks.update(blockIndex, newBytes)
     }
     bytesBlocks
@@ -483,8 +599,9 @@ private class Bytes128bitsBlocks(bytesInput: Array[Byte]) {
 }
 
 object Bytes128bitsBlocks {
+
   def of(textUTF8: String): Bytes128bitsBlocks = {
-    new Bytes128bitsBlocks(textUTF8.getBytes(Charset.forName("UTF-8")))
+    new Bytes128bitsBlocks(textUTF8.getBytes(Charset.forName("UTF-8")), true)
   }
 
   def of(binaries: Array[Byte]): Bytes128bitsBlocks = {

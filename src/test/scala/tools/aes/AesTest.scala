@@ -172,10 +172,7 @@ class AesTest extends AnyFlatSpec with should.Matchers {
     val table16x16Encode = Table16x16.getAesSubstitutionBOX
     val keyExpansion = keyExpansionAES128(keyBytes128, table16x16Encode)
 
-    //TODO: make a string method to get bytes in matrix mode
     val bytes128Blocks = Bytes128bitsBlocks.of("Two One Nine Two")
-    // to check bypass:
-    //    val bytes128Blocks = Bytes128bitsBlocks.of(Bytes128bits.of("Two One Nine Two")())
     val galoisFieldEncode = Bytes128bits.galoisFieldEncodeBox
 
     bytes128Blocks(0).addRoundKey(keyExpansion, 0)
