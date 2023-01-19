@@ -1,6 +1,7 @@
 package fr.maxime.binandco
 package tools.exercises.variance
 
+//test
 private object RockJVMExample extends App {
 
   private trait Food {
