@@ -1,5 +1,5 @@
 package fr.maxime.binandco
-package tools.variance
+package tools.exercises.variance
 
 private object RockJVMExample extends App {
 
