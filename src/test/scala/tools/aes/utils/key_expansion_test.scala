@@ -1,7 +1,7 @@
 package fr.maxime.binandco
 package tools.aes.utils
 
-import tools.aes.Table16x16
+import tools.aes.interfaces.Table16x16
 import tools.aes.utils.*
 
 import org.scalatest.flatspec.AnyFlatSpec

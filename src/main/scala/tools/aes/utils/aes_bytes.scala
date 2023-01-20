@@ -1,8 +1,8 @@
 package fr.maxime.binandco
 package tools.aes.utils
 
-import tools.aes.Table16x16
-import tools.aes.Table16x16.transformByteAccordingTable16x16
+import tools.aes.interfaces.Table16x16
+import tools.aes.interfaces.Table16x16.transformByteAccordingTable16x16
 
 import java.nio.charset.Charset
 import scala.annotation.unused
@@ -131,7 +131,7 @@ private class Bytes128bits(bytes: Array[Byte]) {
    *         02,03,00,01, => rotate right by 2
    *         03,00,01,02  => rotate right by 3
    *       ]
-   *    encoded =>
+   *    decoded =>
    *      0x[
    *         00,01,02,03,
    *         00,01,02,03,
@@ -369,7 +369,7 @@ private class Bytes128bits(bytes: Array[Byte]) {
     val columnA = index % 4
     var byteA: Int = 0x00
     for (i <- 0 until 4) {
-      println(s"galoisFieldBox ^ byte = ${galoisFieldBox(lineA * 4 + i).toInt.toHexString} ^ ${bytes(i * 4 + columnA).toInt.toHexString}")
+      //      println(s"galoisFieldBox ^ byte = ${galoisFieldBox(lineA * 4 + i).toInt.toHexString} ^ ${bytes(i * 4 + columnA).toInt.toHexString}")
       byteA = byteA ^ polynomialMultiplication(galoisFieldBox(lineA * 4 + i), bytes(i * 4 + columnA))
     }
     byteA.toByte
@@ -382,20 +382,20 @@ private class Bytes128bits(bytes: Array[Byte]) {
    * - step2 : polynomial calculation of MatrixBytes of 16 Bytes (128bits)
    *   - See also [[polynomialMatrix polynomialMatrix_method]]
    *
-   * @param galoisFieldBox An Array of 16 Bytes (256bits)
+   * @param galoisFieldBox An Array of 16 Bytes (128bits)
    */
   def mixColumns(galoisFieldBox: Array[Byte]): Unit = {
 
-    println("mixColumns")
-    println(bytes128bits.map(i => i.toInt.toHexString).mkString(" "))
-    this.printString()
+    //    println("mixColumns")
+    //    println(bytes128bits.map(i => i.toInt.toHexString).mkString(" "))
+    //    this.printString()
 
     val bytesCopy = new Array[Byte](16)
     for (i <- this.bytes128bits.indices) {
       bytesCopy.update(i, this.bytes128bits(i))
     }
 
-    for (i <- bytes128bits.indices) {
+    for (i <- this.bytes128bits.indices) {
       this.bytes128bits.update(i, polynomialMatrix(bytesCopy, galoisFieldBox, i))
     }
 

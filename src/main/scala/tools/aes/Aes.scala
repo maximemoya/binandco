@@ -1,6 +1,7 @@
 package fr.maxime.binandco
 package tools.aes
 
+import tools.aes.interfaces.Table16x16
 import tools.aes.utils.{Bytes128bits, Bytes128bitsBlocks, keyExpansionAES128}
 import tools.aes.{Aes, AesTools}
 import tools.sha.Sha256
@@ -30,8 +31,8 @@ object Aes {
 
     println("\nround 1 key:\n")
 
-    for(i <- keyExpansion(0).indices){
-      println("\t" + String.format("%8s",keyExpansion(0)(i).toHexString).replace(" ", "0"))
+    for (i <- keyExpansion(0).indices) {
+      println("\t" + String.format("%8s", keyExpansion(0)(i).toHexString).replace(" ", "0"))
     }
 
     println(s"\nTEXT bytesBlock:\n")

@@ -1,6 +1,7 @@
 package fr.maxime.binandco
 package tools.aes
 
+import tools.aes.interfaces.Table16x16
 import tools.aes.utils.Bytes128bits
 
 import java.nio.charset.Charset
@@ -107,14 +108,7 @@ class IntsFormatted(bytes4Formatted: BytesMultipleOf4, packetSize: Int) {
 
 }
 
-/**
- * {{{
- *   apply() => Array[Byte] table 256 Bytes (16x16)
- * }}}
- *
- * @param array256Bytes Array[Byte]
- */
-class Table16x16(array256Bytes: Array[Byte]) {
+/*class Table16x16(array256Bytes: Array[Byte]) {
 
   // --------
   // Public:
@@ -232,7 +226,7 @@ object Table16x16 {
 
   }
 
-}
+}*/
 
 object AesTools {
 

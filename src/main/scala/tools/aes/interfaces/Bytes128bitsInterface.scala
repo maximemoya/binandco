@@ -1,41 +1,20 @@
 package fr.maxime.binandco
 package tools.aes.interfaces
 
-private class Bytes128(bytes:Array[Byte]) {
-  def apply(): Array[Byte] = bytes
-}
-object Bytes128{
-  def of(s:String): Bytes128 = {
-    val arr = s.getBytes
-    if (arr.length > 16){
-      new Bytes128(arr.take(15))
-    }
-    else {
-      new Bytes128(arr)
-    }
-  }
-}
+import tools.aes.interfaces.Table16x16
+import tools.aes.interfaces.implementations.Bytes128bitsImplementationMM
 
-private trait Bytes128bitsInterface {
+trait Bytes128bitsInterface {
   val bytes128: Bytes128
-}
-object Bytes128bitsInterface {
-  def of(s:String): Bytes128bitsInterface =
-    if(s != null){
-      new Bytes128bitsInterface {
-        override val bytes128: Bytes128 = Bytes128.of(s)
-      }
-    }
-    else{
-      throw Error("try to create Bytes128bitsInterface.of(null) <= string can not be null here")
-    }
 
-}
+  def addRoundKey(bytes: Bytes128, keyExpansion: Array[Array[Int]], round: Int): Bytes128
+  
+  def subBytes(bytes: Bytes128, tableEncode: Table16x16): Bytes128
+  
+  def shiftRowsEncode(bytes: Bytes128): Bytes128
+  
+  def shiftRowsDecode(bytes: Bytes128): Bytes128
 
-val b1:Bytes128bitsInterface = Bytes128bitsInterface.of(null)
-object TestIt extends App {
-
-  println(new Bytes128(Array(0,1,2,3,4))().mkString(" "))
-  println(b1.bytes128().mkString(" "))
+  def mixColumns(bytes: Bytes128, galoisFieldBox: Bytes128): Bytes128
 
 }

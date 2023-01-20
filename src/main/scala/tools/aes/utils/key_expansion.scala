@@ -1,7 +1,8 @@
 package fr.maxime.binandco
 package tools.aes.utils
 
-import tools.aes.Table16x16
+import tools.aes.interfaces.Table16x16
+import tools.aes.interfaces.Table16x16
 
 def keyExpansionAES128(bytes: Array[Byte], table16x16: Table16x16): Array[Array[Int]] = {
   val bytesW1 = Array[Byte](bytes(0), bytes(1), bytes(2), bytes(3))
@@ -18,7 +19,7 @@ def keyExpansionAES128(bytes: Array[Byte], table16x16: Table16x16): Array[Array[
   arrayKeyExpansion.update(1, word2)
   arrayKeyExpansion.update(2, word3)
   arrayKeyExpansion.update(3, word4)
-  
+
   //  println("arrayKeyExpansion:")
   //  for(i<- arrayKeyExpansion.indices){
   //    if(arrayKeyExpansion(i)!=0){
@@ -102,17 +103,17 @@ def keyExpansionAES128(bytes: Array[Byte], table16x16: Table16x16): Array[Array[
       arrayKeyExpansionReversed(i * 4 + 2),
       arrayKeyExpansionReversed(i * 4 + 3)
     ))
-    
-//    println(s"\nRound{$i}\n")
-//    print(s"${String.format("%8s", arrayKeyExpansion(i * 4).toHexString).replace(" ", "0")}")
-//    print(s"${String.format("%8s", arrayKeyExpansion(i * 4 + 1).toHexString).replace(" ", "0")}")
-//    print(s"${String.format("%8s", arrayKeyExpansion(i * 4 + 2).toHexString).replace(" ", "0")}")
-//    println(s"${String.format("%8s", arrayKeyExpansion(i * 4 + 3).toHexString).replace(" ", "0")}")
-//    println()
-//    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4).toHexString).replace(" ", "0")}")
-//    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4 + 1).toHexString).replace(" ", "0")}")
-//    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4 + 2).toHexString).replace(" ", "0")}")
-//    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4 + 3).toHexString).replace(" ", "0")}")
+
+    //    println(s"\nRound{$i}\n")
+    //    print(s"${String.format("%8s", arrayKeyExpansion(i * 4).toHexString).replace(" ", "0")}")
+    //    print(s"${String.format("%8s", arrayKeyExpansion(i * 4 + 1).toHexString).replace(" ", "0")}")
+    //    print(s"${String.format("%8s", arrayKeyExpansion(i * 4 + 2).toHexString).replace(" ", "0")}")
+    //    println(s"${String.format("%8s", arrayKeyExpansion(i * 4 + 3).toHexString).replace(" ", "0")}")
+    //    println()
+    //    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4).toHexString).replace(" ", "0")}")
+    //    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4 + 1).toHexString).replace(" ", "0")}")
+    //    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4 + 2).toHexString).replace(" ", "0")}")
+    //    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4 + 3).toHexString).replace(" ", "0")}")
 
   }
 

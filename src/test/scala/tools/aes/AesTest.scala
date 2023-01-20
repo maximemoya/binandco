@@ -1,6 +1,7 @@
 package fr.maxime.binandco
 package tools.aes
 
+import tools.aes.interfaces.Table16x16
 import tools.aes.utils.{Bytes128bits, Bytes128bitsBlocks, keyExpansionAES128}
 
 import org.scalatest.flatspec.AnyFlatSpec
