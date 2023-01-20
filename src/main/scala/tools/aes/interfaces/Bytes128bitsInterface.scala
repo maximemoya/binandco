@@ -16,13 +16,23 @@ object Bytes128{
   }
 }
 
-trait Bytes128bitsInterface {
+private trait Bytes128bitsInterface {
   val bytes128: Bytes128
 }
+object Bytes128bitsInterface {
+  def of(s:String): Bytes128bitsInterface =
+    if(s != null){
+      new Bytes128bitsInterface {
+        override val bytes128: Bytes128 = Bytes128.of(s)
+      }
+    }
+    else{
+      throw Error("try to create Bytes128bitsInterface.of(null) <= string can not be null here")
+    }
 
-val b1:Bytes128bitsInterface = new Bytes128bitsInterface {
-  override val bytes128: Bytes128 = Bytes128.of("abc")
 }
+
+val b1:Bytes128bitsInterface = Bytes128bitsInterface.of(null)
 object TestIt extends App {
 
   println(new Bytes128(Array(0,1,2,3,4))().mkString(" "))
