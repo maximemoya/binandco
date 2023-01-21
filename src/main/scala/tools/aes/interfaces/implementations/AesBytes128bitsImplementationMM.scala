@@ -1,32 +1,35 @@
 package fr.maxime.binandco
 package tools.aes.interfaces.implementations
 
-import tools.aes.interfaces.Table16x16
 import tools.aes.interfaces.Table16x16.transformByteAccordingTable16x16
-import tools.aes.interfaces.{Bytes128, Bytes128bitsInterface, Table16x16}
+import tools.aes.interfaces.{Bytes128, AesBytes128bitsInterface, Table16x16}
 import tools.aes.utils.intToByte
 
-object Bytes128bitsImplementationMM {
-  def of(s: String): Bytes128bitsInterface =
+object AesBytes128bitsImplementationMM {
+  def of(s: String): AesBytes128bitsInterface =
     bytes128bitsImplementationMM(Bytes128.of(s))
 
-  def of(bytes: Array[Byte]): Bytes128bitsInterface =
+  def of(bytes: Array[Byte]): AesBytes128bitsInterface =
     bytes128bitsImplementationMM(Bytes128.of(bytes))
 
-  private val bytes128bitsImplementationMM: Bytes128 => Bytes128bitsInterface = bytes => new Bytes128bitsInterface {
+  private val bytes128bitsImplementationMM: Bytes128 => AesBytes128bitsInterface = bytes => new AesBytes128bitsInterface {
     override val bytes128: Bytes128 = bytes
 
-    override def addRoundKey(bytes: Bytes128, keyExpansion: Array[Array[Int]], round: Int): Bytes128 = {
+    // AddRoundKey
+
+    override def addRoundKey(keyExpansion: Array[Array[Int]], round: Int): AesBytes128bitsInterface = {
       val keyArray = keyExpansion(round)
-      for (i <- bytes.indices) {
-        val value = (bytes(i) ^ intToByte(keyArray(i / 4), i % 4)).toByte
-        bytes.update(i, value)
+      for (i <- this.bytes128.indices) {
+        val value = (this.bytes128(i) ^ intToByte(keyArray(i / 4), i % 4)).toByte
+        this.bytes128.update(i, value)
       }
-      bytes
+      this
     }
 
+    // SubBytes
+
     /**
-     * Convert Byte by Byte the Bytes128bits with Table16x16
+     * Convert Byte to Byte this.bytes128bits with Table16x16
      * {{{
      * Example:
      *   part of Table16x16:
@@ -48,20 +51,21 @@ object Bytes128bitsImplementationMM {
      *
      * }}}
      *
-     * @param bytes       An Array of 16 Bytes (128bits)
      * @param tableEncode A Table16x16 (256Bytes)
-     * @return bytes substitutedBytes which is an Array of 16 Bytes (128bits)
+     * @return this as Bytes128bitsInterface
      */
-    override def subBytes(bytes: Bytes128, tableEncode: Table16x16): Bytes128 = {
-      for (index <- bytes.indices) {
-        bytes.update(index, transformByteAccordingTable16x16(bytes(index), tableEncode))
+    override def subBytes(tableEncode: Table16x16): AesBytes128bitsInterface = {
+      for (index <- this.bytes128.indices) {
+        this.bytes128.update(index, transformByteAccordingTable16x16(this.bytes128(index), tableEncode))
       }
-      bytes
+      this
     }
+
+    // ShiftRows
 
     /**
      * {{{
-     *   shift row's of bytes128bits :
+     *   shift row's of this.bytes128bits :
      *    from =>
      *      0x[
      *         00,01,02,03,
@@ -78,34 +82,33 @@ object Bytes128bitsImplementationMM {
      *       ]
      * }}}
      *
-     * @param bytes An Array of 16 Bytes (128bits)
-     * @return bytes shiftRowsEncoded which is an Array of 16 Bytes (128bits)
+     * @return this as Bytes128bitsInterface
      */
-    override def shiftRowsEncode(bytes: Bytes128): Bytes128 = {
-      val byteAt4 = bytes(4)
-      bytes.update(4, bytes(5))
-      bytes.update(5, bytes(6))
-      bytes.update(6, bytes(7))
-      bytes.update(7, byteAt4)
+    override def shiftRowsEncode(): AesBytes128bitsInterface = {
+      val byteAt4 = this.bytes128(4)
+      this.bytes128.update(4, this.bytes128(5))
+      this.bytes128.update(5, this.bytes128(6))
+      this.bytes128.update(6, this.bytes128(7))
+      this.bytes128.update(7, byteAt4)
 
-      val byteAt8 = bytes(8)
-      val byteAt9 = bytes(9)
-      bytes.update(8, bytes(10))
-      bytes.update(9, bytes(11))
-      bytes.update(10, byteAt8)
-      bytes.update(11, byteAt9)
+      val byteAt8 = this.bytes128(8)
+      val byteAt9 = this.bytes128(9)
+      this.bytes128.update(8, this.bytes128(10))
+      this.bytes128.update(9, this.bytes128(11))
+      this.bytes128.update(10, byteAt8)
+      this.bytes128.update(11, byteAt9)
 
-      val byteAt15 = bytes(15)
-      bytes.update(15, bytes(14))
-      bytes.update(14, bytes(13))
-      bytes.update(13, bytes(12))
-      bytes.update(12, byteAt15)
-      bytes
+      val byteAt15 = this.bytes128(15)
+      this.bytes128.update(15, this.bytes128(14))
+      this.bytes128.update(14, this.bytes128(13))
+      this.bytes128.update(13, this.bytes128(12))
+      this.bytes128.update(12, byteAt15)
+      this
     }
 
     /**
      * {{{
-     *   shift row's of bytes128bits :
+     *   shift row's of this.bytes128bits :
      *    from =>
      *      0x[
      *         00,01,02,03,
@@ -122,32 +125,33 @@ object Bytes128bitsImplementationMM {
      *       ]
      * }}}
      *
-     * @param bytes An Array of 16 Bytes (128bits)
-     * @return bytes shiftRowsDecoded which is an Array of 16 Bytes (128bits)
+     * @return this as Bytes128bitsInterface
      */
-    override def shiftRowsDecode(bytes: Bytes128): Bytes128 = {
+    override def shiftRowsDecode(): AesBytes128bitsInterface = {
 
-      val byteAt7 = bytes(7)
-      bytes.update(7, bytes(6))
-      bytes.update(6, bytes(5))
-      bytes.update(5, bytes(4))
-      bytes.update(4, byteAt7)
+      val byteAt7 = this.bytes128(7)
+      this.bytes128.update(7, this.bytes128(6))
+      this.bytes128.update(6, this.bytes128(5))
+      this.bytes128.update(5, this.bytes128(4))
+      this.bytes128.update(4, byteAt7)
 
-      val byteAt8 = bytes(8)
-      val byteAt9 = bytes(9)
-      bytes.update(8, bytes(10))
-      bytes.update(9, bytes(11))
-      bytes.update(10, byteAt8)
-      bytes.update(11, byteAt9)
+      val byteAt8 = this.bytes128(8)
+      val byteAt9 = this.bytes128(9)
+      this.bytes128.update(8, this.bytes128(10))
+      this.bytes128.update(9, this.bytes128(11))
+      this.bytes128.update(10, byteAt8)
+      this.bytes128.update(11, byteAt9)
 
-      val byteAt12 = bytes(12)
-      bytes.update(12, bytes(13))
-      bytes.update(13, bytes(14))
-      bytes.update(14, bytes(15))
-      bytes.update(15, byteAt12)
-      bytes
+      val byteAt12 = this.bytes128(12)
+      this.bytes128.update(12, this.bytes128(13))
+      this.bytes128.update(13, this.bytes128(14))
+      this.bytes128.update(14, this.bytes128(15))
+      this.bytes128.update(15, byteAt12)
+      this
 
     }
+
+    // MixColumns
 
     private def getPolynomial(intUp: Int, strBinDown: String): Byte = {
 
@@ -311,22 +315,21 @@ object Bytes128bitsImplementationMM {
      * - step2 : polynomial calculation of MatrixBytes of 16 Bytes (128bits)
      *   - See also [[polynomialMatrixCellCalculation polynomialMatrixCellCalculation]]
      *
-     * @param bytes          An Array of 16 Bytes (128bits)
      * @param galoisFieldBox An Array of 16 Bytes (128bits)
-     * @return bytes mixedColumns which is an Array of 16 Bytes (128bits)
+     * @return this as Bytes128bitsInterface
      */
-    override def mixColumns(bytes: Bytes128, galoisFieldBox: Bytes128): Bytes128 = {
+    override def mixColumns(galoisFieldBox: Bytes128): AesBytes128bitsInterface = {
 
       val bytesCopy = new Array[Byte](16)
-      for (i <- bytes.indices) {
-        bytesCopy.update(i, bytes(i))
+      for (i <- this.bytes128.indices) {
+        bytesCopy.update(i, this.bytes128(i))
       }
       val bytes128Copy = Bytes128.of(bytesCopy)
 
-      for (i <- bytes.indices) {
-        bytes.update(i, polynomialMatrixCellCalculation(bytes128Copy, galoisFieldBox, i))
+      for (i <- this.bytes128.indices) {
+        this.bytes128.update(i, polynomialMatrixCellCalculation(bytes128Copy, galoisFieldBox, i))
       }
-      bytes
+      this
 
     }
 
@@ -336,41 +339,52 @@ object Bytes128bitsImplementationMM {
 
 object TestIt extends App {
 
-  val bytes128bitsMM: Bytes128bitsInterface = Bytes128bitsImplementationMM.of("abcdefghijklmnop")
-  val bytes128 = bytes128bitsMM.bytes128
+  private val aesBytes128bitsMM: AesBytes128bitsInterface = AesBytes128bitsImplementationMM.of("abcdefghijklmnop")
   println("-initial state:")
-  bytes128.printString()
+  aesBytes128bitsMM.printBytes()
 
   // ENCODE
 
-  val subEncoded = bytes128bitsMM.subBytes(bytes128, Table16x16.getAesSubstitutionBOX)
+  private val subEncoded = aesBytes128bitsMM.subBytes(Table16x16.getAesSubstitutionBOX)
   println("-subBytesEncoding...")
-  subEncoded.printString()
+  subEncoded.printBytes()
 
-  val shiftEncoded = bytes128bitsMM.shiftRowsEncode(subEncoded)
+  private val shiftEncoded = aesBytes128bitsMM.shiftRowsEncode()
   println("-shiftRowsEncoding...")
-  shiftEncoded.printString()
+  shiftEncoded.printBytes()
 
-  val mixColumnEncoded = bytes128bitsMM.mixColumns(shiftEncoded, Bytes128.galoisFieldEncodeBox)
+  private val mixColumnEncoded = aesBytes128bitsMM.mixColumns(Bytes128.galoisFieldEncodeBox)
   println("-mixColumnsEncoding...")
-  mixColumnEncoded.printString()
+  mixColumnEncoded.printBytes()
 
   // DECODE
 
-  val mixColumnDecoded = bytes128bitsMM.mixColumns(mixColumnEncoded, Bytes128.galoisFieldDecodeBox)
+  private val mixColumnDecoded = aesBytes128bitsMM.mixColumns(Bytes128.galoisFieldDecodeBox)
   println("-mixColumnDecoding...")
-  mixColumnDecoded.printString()
+  mixColumnDecoded.printBytes()
 
-  val shiftDecoded = bytes128bitsMM.shiftRowsDecode(mixColumnDecoded)
+  private val shiftDecoded = aesBytes128bitsMM.shiftRowsDecode()
   println("-shiftDecoding...")
-  shiftDecoded.printString()
+  shiftDecoded.printBytes()
 
-  val subDecoded = bytes128bitsMM.subBytes(shiftDecoded, Table16x16.createDecodeTable16x16(Table16x16.getAesSubstitutionBOX))
+  private val subDecoded = aesBytes128bitsMM.subBytes(Table16x16.createDecodeTable16x16(Table16x16.getAesSubstitutionBOX))
   println("-subBytesDecoding...")
-  subDecoded.printString()
+  subDecoded.printBytes()
 
-  // idea to encode by chain:
-  //  bytes128bitsMM.subBytes(Table16x16.getAesSubstitutionBOX).shiftRowsEncode().mixColumns(Bytes128.galoisFieldEncodeBox)
-  // idea to decode by chain:
-  //  bytes128bitsMM.mixColumns(Bytes128.galoisFieldDecodeBox).shiftRowsDecode().subBytes(Table16x16.createDecodeTable16x16(Table16x16.getAesSubstitutionBOX))
+  // CHAIN METHODS:
+
+  aesBytes128bitsMM
+    .subBytes(Table16x16.getAesSubstitutionBOX)
+    .shiftRowsEncode()
+    .mixColumns(Bytes128.galoisFieldEncodeBox)
+  println("chainEncode:")
+  aesBytes128bitsMM.printBytes()
+
+  aesBytes128bitsMM
+    .mixColumns(Bytes128.galoisFieldDecodeBox)
+    .shiftRowsDecode()
+    .subBytes(Table16x16.createDecodeTable16x16(Table16x16.getAesSubstitutionBOX))
+  println("chainDecode:")
+  aesBytes128bitsMM.printBytes()
+
 }
