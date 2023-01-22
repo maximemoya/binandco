@@ -2,23 +2,26 @@ package fr.maxime.binandco
 package tools.aes.interfaces.implementations
 
 import tools.aes.interfaces.Table16x16.transformByteAccordingTable16x16
-import tools.aes.interfaces.{AesBytes128bitsInterface, Bytes128, Table16x16}
+import tools.aes.interfaces.{AesBytes128bitsInterface, Bytes128, KeyExpansion128bits, Table16x16}
 import tools.aes.utils.intToByte
 
-object AesBytes128bitsImplementationMM {
+object AesBytes128bitsImplementationRegular {
+
   def of(s: String): AesBytes128bitsInterface =
-    bytes128bitsImplementationMM(Bytes128.of(s))
+    val bytes128 = Bytes128.of(s)
+    bytes128.reverseBytes128()
+    aesBytes128bitsImplementationRegular(bytes128)
 
   def of(bytes: Array[Byte]): AesBytes128bitsInterface =
-    bytes128bitsImplementationMM(Bytes128.of(bytes))
+    aesBytes128bitsImplementationRegular(Bytes128.of(bytes))
 
-  private def bytes128bitsImplementationMM(bytes: Bytes128): AesBytes128bitsInterface =
+  private def aesBytes128bitsImplementationRegular(bytes: Bytes128): AesBytes128bitsInterface =
     new AesBytes128bitsInterface {
       override val bytes128: Bytes128 = bytes
 
       // AddRoundKey
 
-      override def addRoundKey(keyExpansion: Array[Array[Int]], round: Int): AesBytes128bitsInterface = {
+      override def addRoundKey(keyExpansion: KeyExpansion128bits, round: Int): AesBytes128bitsInterface = {
         val keyArray = keyExpansion(round)
         for (i <- this.bytes128.indices) {
           val value = (this.bytes128(i) ^ intToByte(keyArray(i / 4), i % 4)).toByte
@@ -340,24 +343,24 @@ object AesBytes128bitsImplementationMM {
 
 object TestIt extends App {
 
-  private val aesBytes128bitsMM: AesBytes128bitsInterface = AesBytes128bitsImplementationMM.of("abcdefghijklmnop")
+  private val aesBytes128bitsRegular: AesBytes128bitsInterface = AesBytes128bitsImplementationRegular.of("abcdefghijklmnop")
   println("-initial state:")
-  aesBytes128bitsMM.printBytes()
+  aesBytes128bitsRegular.printBytes()
 
   // CHAIN METHODS:
 
-  aesBytes128bitsMM
+  aesBytes128bitsRegular
     .subBytes(Table16x16.getAesSubstitutionBOX)
     .shiftRowsEncode()
     .mixColumns(Bytes128.galoisFieldEncodeBox)
   println("chainEncode:")
-  aesBytes128bitsMM.printBytes()
+  aesBytes128bitsRegular.printBytes()
 
-  aesBytes128bitsMM
+  aesBytes128bitsRegular
     .mixColumns(Bytes128.galoisFieldDecodeBox)
     .shiftRowsDecode()
     .subBytes(Table16x16.createDecodeTable16x16(Table16x16.getAesSubstitutionBOX))
   println("chainDecode:")
-  aesBytes128bitsMM.printBytes()
+  aesBytes128bitsRegular.printBytes()
 
 }

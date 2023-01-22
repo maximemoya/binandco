@@ -2,7 +2,7 @@ package fr.maxime.binandco
 package tools.aes.interfaces
 
 import tools.aes.interfaces.Table16x16
-import tools.aes.interfaces.implementations.AesBytes128bitsImplementationMM
+import tools.aes.interfaces.implementations.AesBytes128bitsImplementationRegular
 
 trait AesBytes128bitsInterface {
   val bytes128: Bytes128
@@ -17,7 +17,7 @@ trait AesBytes128bitsInterface {
    * @param round A RoundIndex by Int
    * @return should be this
    */
-  def addRoundKey(keyExpansion: Array[Array[Int]], round: Int): AesBytes128bitsInterface
+  def addRoundKey(keyExpansion: KeyExpansion128bits, round: Int): AesBytes128bitsInterface
 
   /**
    * should transform this.bytes128

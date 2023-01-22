@@ -3,8 +3,10 @@ package tools.aes.interfaces
 
 private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) {
 
-  private val words: Array[Array[Int]] = getKeyExpansion(key128bits, table16x16)
+  val words: Array[Array[Int]] = getKeyExpansion(key128bits, table16x16)
 
+  def apply(round:Int) : Array[Int] = words(round)
+  
   def printWords(): Unit = {
     println(s" < KeyExpansion128bits (${words.length} words) > :")
     println(words.map(word => word.map(i => "\t" + String.format("%8s", i.toHexString).replace(" ", "0")).mkString("\n")).mkString("\n\n"))
