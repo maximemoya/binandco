@@ -45,7 +45,7 @@ private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) 
       arrayKeyExpansion.update(5 + 4 * i, arrayKeyExpansion(4 + 4 * i) ^ arrayKeyExpansion(1 + 4 * i))
       arrayKeyExpansion.update(6 + 4 * i, arrayKeyExpansion(5 + 4 * i) ^ arrayKeyExpansion(2 + 4 * i))
       arrayKeyExpansion.update(7 + 4 * i, arrayKeyExpansion(6 + 4 * i) ^ arrayKeyExpansion(3 + 4 * i))
-      
+
     }
 
     val arrayKeyExpansionReversed = new Array[Int](arrayKeyExpansion.length)
@@ -83,7 +83,7 @@ private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) 
         arrayKeyExpansionReversed.update(i, BigInt.apply(arr).toInt)
       }
     }
-    
+
     val arrayKeyExpansionReversedN2 = new Array[Array[Int]](11)
     for (i <- arrayKeyExpansionReversedN2.indices) {
       arrayKeyExpansionReversedN2.update(i, Array(
@@ -92,7 +92,7 @@ private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) 
         arrayKeyExpansionReversed(i * 4 + 2),
         arrayKeyExpansionReversed(i * 4 + 3)
       ))
-      
+
     }
 
     arrayKeyExpansionReversedN2
