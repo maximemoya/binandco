@@ -5,8 +5,8 @@ private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) 
 
   val words: Array[Array[Int]] = getKeyExpansion(key128bits, table16x16)
 
-  def apply(round:Int) : Array[Int] = words(round)
-  
+  def apply(round: Int): Array[Int] = words(round)
+
   def printWords(): Unit = {
     println(s" < KeyExpansion128bits (${words.length} words) > :")
     println(words.map(word => word.map(i => "\t" + String.format("%8s", i.toHexString).replace(" ", "0")).mkString("\n")).mkString("\n\n"))
@@ -36,7 +36,7 @@ private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) 
       //    println(s"wordRot: 0x${wordRot.toHexString}")
       val subBytes = new Array[Byte](4)
       for (j <- subBytes.indices) {
-        val byte = Table16x16.transformByteAccordingTable16x16(intToByte(wordRot, j), table16x16)
+        val byte = Table16x16.transformByteAccordingTable16x16(KeyExpansion128bits.intToByte(wordRot, j), table16x16)
         subBytes.update(j, byte)
       }
       val wordSubByte = BigInt.apply(subBytes).toInt
@@ -58,34 +58,34 @@ private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) 
     val arrayKeyExpansionReversed = new Array[Int](arrayKeyExpansion.length)
     for (i <- arrayKeyExpansionReversed.indices) {
       if (i % 4 == 0) {
-        val b0 = intToByte(arrayKeyExpansion(i), 0)
-        val b1 = intToByte(arrayKeyExpansion(i + 1), 0)
-        val b2 = intToByte(arrayKeyExpansion(i + 2), 0)
-        val b3 = intToByte(arrayKeyExpansion(i + 3), 0)
+        val b0 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i), 0)
+        val b1 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i + 1), 0)
+        val b2 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i + 2), 0)
+        val b3 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i + 3), 0)
         val arr = Array[Byte](b0, b1, b2, b3)
         arrayKeyExpansionReversed.update(i, BigInt.apply(arr).toInt)
       }
       else if (i % 4 == 1) {
-        val b0 = intToByte(arrayKeyExpansion(i - 1), 1)
-        val b1 = intToByte(arrayKeyExpansion(i), 1)
-        val b2 = intToByte(arrayKeyExpansion(i + 1), 1)
-        val b3 = intToByte(arrayKeyExpansion(i + 2), 1)
+        val b0 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i - 1), 1)
+        val b1 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i), 1)
+        val b2 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i + 1), 1)
+        val b3 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i + 2), 1)
         val arr = Array[Byte](b0, b1, b2, b3)
         arrayKeyExpansionReversed.update(i, BigInt.apply(arr).toInt)
       }
       else if (i % 4 == 2) {
-        val b0 = intToByte(arrayKeyExpansion(i - 2), 2)
-        val b1 = intToByte(arrayKeyExpansion(i - 1), 2)
-        val b2 = intToByte(arrayKeyExpansion(i), 2)
-        val b3 = intToByte(arrayKeyExpansion(i + 1), 2)
+        val b0 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i - 2), 2)
+        val b1 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i - 1), 2)
+        val b2 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i), 2)
+        val b3 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i + 1), 2)
         val arr = Array[Byte](b0, b1, b2, b3)
         arrayKeyExpansionReversed.update(i, BigInt.apply(arr).toInt)
       }
       else if (i % 4 == 3) {
-        val b0 = intToByte(arrayKeyExpansion(i - 3), 3)
-        val b1 = intToByte(arrayKeyExpansion(i - 2), 3)
-        val b2 = intToByte(arrayKeyExpansion(i - 1), 3)
-        val b3 = intToByte(arrayKeyExpansion(i), 3)
+        val b0 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i - 3), 3)
+        val b1 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i - 2), 3)
+        val b2 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i - 1), 3)
+        val b3 = KeyExpansion128bits.intToByte(arrayKeyExpansion(i), 3)
         val arr = Array[Byte](b0, b1, b2, b3)
         arrayKeyExpansionReversed.update(i, BigInt.apply(arr).toInt)
       }
@@ -128,7 +128,14 @@ private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) 
     a ^ b
   }
 
-  private def intToByte(anInt: Int, indexByte0to3: Int): Byte = {
+}
+
+object KeyExpansion128bits {
+  def of(key128bits: Bytes128, table16x16: Table16x16): KeyExpansion128bits = {
+    new KeyExpansion128bits(key128bits, table16x16)
+  }
+
+  def intToByte(anInt: Int, indexByte0to3: Int): Byte = {
     if (indexByte0to3 >= 0 && indexByte0to3 < 4) {
       val shift = 24 - indexByte0to3 * 8
       val andValue = 0xffL << shift
@@ -137,13 +144,6 @@ private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) 
     else {
       throw new Error(s"ERROR intToByte(anInt, indexByte0to3) => indexByte0to3: '$indexByte0to3' out of range [0->3]")
     }
-  }
-
-}
-
-object KeyExpansion128bits {
-  def of(key128bits: Bytes128, table16x16: Table16x16): KeyExpansion128bits = {
-    new KeyExpansion128bits(key128bits, table16x16)
   }
 
   def longToByte(along: Long, indexByte0to7: Int): Byte = {
@@ -196,12 +196,3 @@ object KeyExpansion128bits {
   }
 
 }
-
-//private class Word() {
-//  private val ints: Array[Int] = Array()
-//}
-//
-//object Word {
-//  def of(): Word = new Word()
-//
-//}

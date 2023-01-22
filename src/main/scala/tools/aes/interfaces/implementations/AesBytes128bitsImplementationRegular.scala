@@ -3,7 +3,6 @@ package tools.aes.interfaces.implementations
 
 import tools.aes.interfaces.Table16x16.transformByteAccordingTable16x16
 import tools.aes.interfaces.{AesBytes128bitsInterface, Bytes128, KeyExpansion128bits, Table16x16}
-import tools.aes.utils.intToByte
 
 object AesBytes128bitsImplementationRegular {
 
@@ -24,7 +23,7 @@ object AesBytes128bitsImplementationRegular {
       override def addRoundKey(keyExpansion: KeyExpansion128bits, round: Int): AesBytes128bitsInterface = {
         val keyArray = keyExpansion(round)
         for (i <- this.bytes128.indices) {
-          val value = (this.bytes128(i) ^ intToByte(keyArray(i / 4), i % 4)).toByte
+          val value = (this.bytes128(i) ^ KeyExpansion128bits.intToByte(keyArray(i / 4), i % 4)).toByte
           this.bytes128.update(i, value)
         }
         this

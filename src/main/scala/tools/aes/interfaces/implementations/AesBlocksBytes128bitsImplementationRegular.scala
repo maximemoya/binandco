@@ -1,7 +1,7 @@
 package fr.maxime.binandco
 package tools.aes.interfaces.implementations
 
-import tools.aes.interfaces.{AesBlocksBytes128bitsInterface, AesBytes128bitsInterface, Bytes128, KeyExpansion128bits, Table16x16}
+import tools.aes.interfaces.*
 import tools.aes.utils.keyExpansionAES128
 
 object AesBlocksBytes128bitsImplementationRegular {
@@ -28,6 +28,7 @@ object AesBlocksBytes128bitsImplementationRegular {
 
       //TODO: code it
       override def encodeBlocks(): AesBlocksBytes128bitsInterface = this
+
       override def decodeBlocks(): AesBlocksBytes128bitsInterface = this
     }
 
