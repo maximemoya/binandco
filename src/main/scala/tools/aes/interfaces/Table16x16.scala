@@ -8,6 +8,7 @@ class Table16x16(array256Bytes: Array[Byte]) {
   // --------
   // Public:
   // ------
+  
   def apply(): Array[Byte] = table
 
   def get(x: Int, y: Int): Byte = table(x + y * 16)
@@ -21,6 +22,7 @@ class Table16x16(array256Bytes: Array[Byte]) {
   // ---------
   // Private:
   // -------
+  
   private val table: Array[Byte] = initTable()
   private val tableString: String = initTableString()
 

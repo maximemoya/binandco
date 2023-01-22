@@ -181,6 +181,7 @@ object AesBytes128bitsImplementationRegular {
           intXor = intXor ^ moduloShift
         }
         intXor.toByte
+        
       }
 
       /**
@@ -236,6 +237,7 @@ object AesBytes128bitsImplementationRegular {
         else
           byteResult = getPolynomial(b2.toInt & 0xff, strBin1)
         byteResult
+        
       }
 
       /**
@@ -302,6 +304,7 @@ object AesBytes128bitsImplementationRegular {
        * @return polynomialMatrixCellCalculation at cellIndex from bytes = A Byte (8bits)
        */
       private def polynomialMatrixCellCalculation(bytes: Bytes128, galoisFieldBox: Bytes128, cellIndex: Int): Byte = {
+        
         val lineA = cellIndex / 4
         val columnA = cellIndex % 4
         var byteA: Int = 0x00
@@ -309,6 +312,7 @@ object AesBytes128bitsImplementationRegular {
           byteA = byteA ^ polynomialBytesMultiplication(galoisFieldBox(lineA * 4 + i), bytes(i * 4 + columnA))
         }
         byteA.toByte
+        
       }
 
       /**

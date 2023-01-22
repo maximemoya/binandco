@@ -30,6 +30,7 @@ private class Bytes128(bytes: Array[Byte]) {
    * }}}
    */
   def reverseBytes128(): Unit = {
+
     val copyBytes = new Array[Byte](16)
     for (i <- bytes.indices) {
       copyBytes.update(i, bytes(i))
@@ -53,6 +54,7 @@ private class Bytes128(bytes: Array[Byte]) {
     bytes.update(13, copyBytes(7))
     bytes.update(14, copyBytes(11))
     bytes.update(15, copyBytes(15))
+
   }
 
   def printBytes128(): Unit = {

@@ -33,26 +33,19 @@ private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) 
     for (i <- 0 until 10) {
 
       val wordRot = rotationWord(arrayKeyExpansion(3 + 4 * i))
-      //    println(s"wordRot: 0x${wordRot.toHexString}")
       val subBytes = new Array[Byte](4)
       for (j <- subBytes.indices) {
         val byte = Table16x16.transformByteAccordingTable16x16(KeyExpansion128bits.intToByte(wordRot, j), table16x16)
         subBytes.update(j, byte)
       }
       val wordSubByte = BigInt.apply(subBytes).toInt
-      //    println(s"wordSubByte: 0x${wordSubByte.toHexString}")
       val wordRCon = wordSubByte ^ rCons(i)
-      //    println(s"wordRCon: 0x${wordRCon.toHexString}")
       val wordToAdd = wordRCon ^ arrayKeyExpansion(0 + 4 * i)
       arrayKeyExpansion.update(4 + 4 * i, wordToAdd)
-      //    println(s"wordToAdd: 0x${wordToAdd.toHexString}")
       arrayKeyExpansion.update(5 + 4 * i, arrayKeyExpansion(4 + 4 * i) ^ arrayKeyExpansion(1 + 4 * i))
-      //    println(s"wordToAdd: 0x${(arrayKeyExpansion(4 + 4 * i) ^ arrayKeyExpansion(1 + 4 * i)).toHexString}")
       arrayKeyExpansion.update(6 + 4 * i, arrayKeyExpansion(5 + 4 * i) ^ arrayKeyExpansion(2 + 4 * i))
-      //    println(s"wordToAdd: 0x${(arrayKeyExpansion(5 + 4 * i) ^ arrayKeyExpansion(2 + 4 * i)).toHexString}")
       arrayKeyExpansion.update(7 + 4 * i, arrayKeyExpansion(6 + 4 * i) ^ arrayKeyExpansion(3 + 4 * i))
-      //    println(s"wordToAdd: 0x${(arrayKeyExpansion(6 + 4 * i) ^ arrayKeyExpansion(3 + 4 * i)).toHexString}")
-
+      
     }
 
     val arrayKeyExpansionReversed = new Array[Int](arrayKeyExpansion.length)
@@ -90,12 +83,7 @@ private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) 
         arrayKeyExpansionReversed.update(i, BigInt.apply(arr).toInt)
       }
     }
-
-    //    println("arrayKeyExpansion:")
-    //    println(s"${arrayKeyExpansion.map(x => String.format("0x-%8s", x.toHexString).replace(" ","0")).mkString("\n")}")
-    //    println("arrayKeyExpansionReversed:")
-    //    println(s"${arrayKeyExpansionReversed.map(x => String.format("0x-%8s", x.toHexString).replace(" ", "0")).mkString("\n")}")
-
+    
     val arrayKeyExpansionReversedN2 = new Array[Array[Int]](11)
     for (i <- arrayKeyExpansionReversedN2.indices) {
       arrayKeyExpansionReversedN2.update(i, Array(
@@ -104,18 +92,7 @@ private class KeyExpansion128bits(key128bits: Bytes128, table16x16: Table16x16) 
         arrayKeyExpansionReversed(i * 4 + 2),
         arrayKeyExpansionReversed(i * 4 + 3)
       ))
-
-      //    println(s"\nRound{$i}\n")
-      //    print(s"${String.format("%8s", arrayKeyExpansion(i * 4).toHexString).replace(" ", "0")}")
-      //    print(s"${String.format("%8s", arrayKeyExpansion(i * 4 + 1).toHexString).replace(" ", "0")}")
-      //    print(s"${String.format("%8s", arrayKeyExpansion(i * 4 + 2).toHexString).replace(" ", "0")}")
-      //    println(s"${String.format("%8s", arrayKeyExpansion(i * 4 + 3).toHexString).replace(" ", "0")}")
-      //    println()
-      //    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4).toHexString).replace(" ", "0")}")
-      //    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4 + 1).toHexString).replace(" ", "0")}")
-      //    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4 + 2).toHexString).replace(" ", "0")}")
-      //    println(s"${String.format("%8s", arrayKeyExpansionReversed(i * 4 + 3).toHexString).replace(" ", "0")}")
-
+      
     }
 
     arrayKeyExpansionReversedN2
