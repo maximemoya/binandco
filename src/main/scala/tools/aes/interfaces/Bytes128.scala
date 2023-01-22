@@ -11,7 +11,7 @@ private class Bytes128(bytes: Array[Byte]) {
 
   def indices: Seq[Int] = bytes.indices
 
-  def printString(): Unit = {
+  def printBytes128(): Unit = {
     var str = ""
     for (byteIndex <- bytes.indices) {
       if (byteIndex % 4 == 0) {
@@ -28,6 +28,7 @@ private class Bytes128(bytes: Array[Byte]) {
 }
 
 object Bytes128 {
+
   def of(s: String): Bytes128 = {
     if (s != null) {
       val arr = s.getBytes

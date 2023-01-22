@@ -16,6 +16,8 @@ class Table16x16(array256Bytes: Array[Byte]) {
 
   override def toString: String = tableString
 
+  def printTable(): Unit = println(this)
+
   // ---------
   // Private:
   // -------

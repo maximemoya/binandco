@@ -8,7 +8,7 @@ trait AesBytes128bitsInterface {
   val bytes128: Bytes128
 
   def printBytes(): Unit = {
-    bytes128.printString()
+    bytes128.printBytes128()
   }
 
   /**

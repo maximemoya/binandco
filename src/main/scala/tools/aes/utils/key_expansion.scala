@@ -4,14 +4,14 @@ package tools.aes.utils
 import tools.aes.interfaces.Table16x16
 import tools.aes.interfaces.Table16x16
 
-def keyExpansionAES128(bytes: Array[Byte], table16x16: Table16x16): Array[Array[Int]] = {
-  val bytesW1 = Array[Byte](bytes(0), bytes(1), bytes(2), bytes(3))
+def keyExpansionAES128(key128bits: Array[Byte], table16x16: Table16x16): Array[Array[Int]] = {
+  val bytesW1 = Array[Byte](key128bits(0), key128bits(1), key128bits(2), key128bits(3))
   val word1: Int = BigInt.apply(bytesW1).toInt
-  val bytesW2 = Array[Byte](bytes(4), bytes(5), bytes(6), bytes(7))
+  val bytesW2 = Array[Byte](key128bits(4), key128bits(5), key128bits(6), key128bits(7))
   val word2: Int = BigInt.apply(bytesW2).toInt
-  val bytesW3 = Array[Byte](bytes(8), bytes(9), bytes(10), bytes(11))
+  val bytesW3 = Array[Byte](key128bits(8), key128bits(9), key128bits(10), key128bits(11))
   val word3: Int = BigInt.apply(bytesW3).toInt
-  val bytesW4 = Array[Byte](bytes(12), bytes(13), bytes(14), bytes(15))
+  val bytesW4 = Array[Byte](key128bits(12), key128bits(13), key128bits(14), key128bits(15))
   val word4: Int = BigInt.apply(bytesW4).toInt
 
   val arrayKeyExpansion: Array[Int] = new Array[Int](4 * 11)
