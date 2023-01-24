@@ -4,6 +4,8 @@ package tools.aes
 import tools.aes.interfaces.implementations.{AesBlocksBytes128bitsImplementationRegular, AesBytes128bitsImplementationRegular}
 import tools.aes.interfaces.*
 
+import java.nio.charset.StandardCharsets
+
 object AesTools extends App {
 
   private def testExampleBytes128(): Unit = {
@@ -53,9 +55,16 @@ object AesTools extends App {
     aesBytes128bitsRegular
       .encodeBlocks()
       .printBlocks()
-    aesBytes128bitsRegular.blocks.foreach(block => block.bytes128.reverseBytes128())
-    aesBytes128bitsRegular.printBlocks()
+//    aesBytes128bitsRegular.blocks.foreach(block => block.bytes128.reverseBytes128())
+//    aesBytes128bitsRegular.printBlocks()
 
+    aesBytes128bitsRegular
+      .decodeBlocks()
+      .printBlocks()
+//    aesBytes128bitsRegular.blocks.foreach(block => block.bytes128.reverseBytes128())
+//    aesBytes128bitsRegular.printBlocks()
+
+    println(new String(aesBytes128bitsRegular.blocks(0).bytes128.getBytes, StandardCharsets.UTF_8))
   }
 
   testExampleBlockBytes128()
