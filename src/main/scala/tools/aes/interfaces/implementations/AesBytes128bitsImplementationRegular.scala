@@ -343,27 +343,3 @@ object AesBytes128bitsImplementationRegular {
     }
 
 }
-
-object TestIt extends App {
-
-  private val aesBytes128bitsRegular: AesBytes128bitsInterface = AesBytes128bitsImplementationRegular.of("abcdefghijklmnop")
-  println("-initial state:")
-  aesBytes128bitsRegular.printBytes()
-
-  // CHAIN METHODS:
-
-  aesBytes128bitsRegular
-    .subBytes(Table16x16.getAesSubstitutionBOX)
-    .shiftRowsEncode()
-    .mixColumns(Bytes128.galoisFieldEncodeBox)
-  println("chainEncode:")
-  aesBytes128bitsRegular.printBytes()
-
-  aesBytes128bitsRegular
-    .mixColumns(Bytes128.galoisFieldDecodeBox)
-    .shiftRowsDecode()
-    .subBytes(Table16x16.createDecodeTable16x16(Table16x16.getAesSubstitutionBOX))
-  println("chainDecode:")
-  aesBytes128bitsRegular.printBytes()
-
-}

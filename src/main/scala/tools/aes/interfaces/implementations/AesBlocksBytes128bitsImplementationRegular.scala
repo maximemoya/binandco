@@ -72,19 +72,3 @@ object AesBlocksBytes128bitsImplementationRegular {
     }
 
 }
-
-object TryBlock extends App {
-  private val myAesBlockOfBytes128 = AesBlocksBytes128bitsImplementationRegular.of("Two One Nine Two", Bytes128.of("Thats my Kung Fu"))
-  myAesBlockOfBytes128.tableEncode.printTable()
-  myAesBlockOfBytes128.tableDecode.printTable()
-  myAesBlockOfBytes128.galoisFieldEncodeBox.printBytes128()
-  myAesBlockOfBytes128.galoisFieldDecodeBox.printBytes128()
-  myAesBlockOfBytes128.keyExpansion.printWords()
-  myAesBlockOfBytes128.printBlocks()
-  println(new String(myAesBlockOfBytes128.blocks(0).bytes128.getBytes, StandardCharsets.UTF_8))
-  myAesBlockOfBytes128.encodeBlocks()
-  myAesBlockOfBytes128.printBlocks()
-  myAesBlockOfBytes128.decodeBlocks()
-  myAesBlockOfBytes128.printBlocks()
-
-}

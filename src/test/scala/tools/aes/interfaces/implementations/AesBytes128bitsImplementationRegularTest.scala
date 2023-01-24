@@ -6,6 +6,8 @@ import tools.aes.interfaces.{AesBytes128bitsInterface, Bytes128, KeyExpansion128
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
+import java.nio.charset.StandardCharsets
+
 class AesBytes128bitsImplementationRegularTest extends AnyFlatSpec with should.Matchers {
 
   // ----------
@@ -79,6 +81,61 @@ class AesBytes128bitsImplementationRegularTest extends AnyFlatSpec with should.M
 
     aesBytes128bitsRegular.mixColumns(galoisFieldEncode)
     aesBytes128bitsRegular.bytes128.getBytes should be(bytes128bitsEncoded)
+  }
+
+  // -----------------
+  // 1stRound Encode:
+  // ---------------
+
+  "1stRound ENCODING" should "succeed encoding" in {
+
+    val keyBytes128 = Bytes128.of("Thats my Kung Fu")
+    val table16x16Encode = Table16x16.getAesSubstitutionBOX
+    val keyExpansion = KeyExpansion128bits(keyBytes128, table16x16Encode)
+
+    val aesBytes128bitsRegular: AesBytes128bitsInterface = AesBytes128bitsImplementationRegular.of("Two One Nine Two")
+    val galoisFieldEncode = Bytes128.galoisFieldEncodeBox
+
+    aesBytes128bitsRegular.addRoundKey(keyExpansion, 0)
+    aesBytes128bitsRegular.subBytes(table16x16Encode)
+    aesBytes128bitsRegular.shiftRowsEncode()
+    aesBytes128bitsRegular.mixColumns(galoisFieldEncode)
+    aesBytes128bitsRegular.addRoundKey(keyExpansion, 1)
+
+    val bytesExpected = Array(
+      0x58.toByte, 0x15.toByte, 0x59.toByte, 0xcd.toByte,
+      0x47.toByte, 0xb6.toByte, 0xd4.toByte, 0x39.toByte,
+      0x08.toByte, 0x1c.toByte, 0xe2.toByte, 0xdf.toByte,
+      0x8b.toByte, 0xba.toByte, 0xe8.toByte, 0xce.toByte,
+    )
+
+    aesBytes128bitsRegular.bytes128.getBytes should be(bytesExpected)
+
+  }
+
+  // ------------------
+  // full Encode test:
+  // ----------------
+
+  "full ENCODING" should "succeed encoding" in {
+
+    val myAesBlockOfBytes128 = AesBlocksBytes128bitsImplementationRegular.of(
+      "Two One Nine Two lol 揦",
+      Bytes128.of("Thats my Kung Fu")
+    )
+    myAesBlockOfBytes128.encodeBlocks()
+
+    myAesBlockOfBytes128.blocks.flatMap(block => block.bytes128.getBytes) should be(Array[Byte](
+      0x29.toByte, 0x57.toByte, 0x40.toByte, 0x1a.toByte,
+      0xc3.toByte, 0x14.toByte, 0x22.toByte, 0x02.toByte,
+      0x50.toByte, 0x20.toByte, 0x99.toByte, 0xd7.toByte,
+      0x5f.toByte, 0xf6.toByte, 0xb3.toByte, 0x3a.toByte,
+      0x53.toByte, 0xac.toByte, 0xfe.toByte, 0x0b.toByte,
+      0xd4.toByte, 0xad.toByte, 0xab.toByte, 0xb4.toByte,
+      0x7b.toByte, 0xcc.toByte, 0x73.toByte, 0x77.toByte,
+      0x03.toByte, 0x30.toByte, 0xf6.toByte, 0xf6.toByte,
+    ))
+
   }
 
   // ----------
@@ -157,32 +214,37 @@ class AesBytes128bitsImplementationRegularTest extends AnyFlatSpec with should.M
   }
 
   // ------------------
-  // 1stFullRoundTest:
-  // --------------
+  // full Decode test:
+  // ----------------
 
-  "1stFullRoundTest ENCODING" should "succeed encoding" in {
+  "full DECODING" should "succeed decoding" in {
 
-    val keyBytes128 = Bytes128.of("Thats my Kung Fu")
-    val table16x16Encode = Table16x16.getAesSubstitutionBOX
-    val keyExpansion = KeyExpansion128bits(keyBytes128, table16x16Encode)
+    val myAesBlockOfBytes128 = AesBlocksBytes128bitsImplementationRegular.of(
+      Array[Byte](
+        0x29.toByte, 0x57.toByte, 0x40.toByte, 0x1a.toByte,
+        0xc3.toByte, 0x14.toByte, 0x22.toByte, 0x02.toByte,
+        0x50.toByte, 0x20.toByte, 0x99.toByte, 0xd7.toByte,
+        0x5f.toByte, 0xf6.toByte, 0xb3.toByte, 0x3a.toByte,
+        0x53.toByte, 0xac.toByte, 0xfe.toByte, 0x0b.toByte,
+        0xd4.toByte, 0xad.toByte, 0xab.toByte, 0xb4.toByte,
+        0x7b.toByte, 0xcc.toByte, 0x73.toByte, 0x77.toByte,
+        0x03.toByte, 0x30.toByte, 0xf6.toByte, 0xf6.toByte,
+      ),
+      Bytes128.of("Thats my Kung Fu")
+    )
+    myAesBlockOfBytes128.decodeBlocks()
+    myAesBlockOfBytes128.blocks.foreach(block => block.bytes128.reverseBytes128())
 
-    val aesBytes128bitsRegular: AesBytes128bitsInterface = AesBytes128bitsImplementationRegular.of("Two One Nine Two")
-    val galoisFieldEncode = Bytes128.galoisFieldEncodeBox
-
-    aesBytes128bitsRegular.addRoundKey(keyExpansion, 0)
-    aesBytes128bitsRegular.subBytes(table16x16Encode)
-    aesBytes128bitsRegular.shiftRowsEncode()
-    aesBytes128bitsRegular.mixColumns(galoisFieldEncode)
-    aesBytes128bitsRegular.addRoundKey(keyExpansion, 1)
-
-    val bytesExpected = Array(
-      0x58.toByte, 0x15.toByte, 0x59.toByte, 0xcd.toByte,
-      0x47.toByte, 0xb6.toByte, 0xd4.toByte, 0x39.toByte,
-      0x08.toByte, 0x1c.toByte, 0xe2.toByte, 0xdf.toByte,
-      0x8b.toByte, 0xba.toByte, 0xe8.toByte, 0xce.toByte,
+    //TODO: improve decode return to string
+    val text0 = new String(myAesBlockOfBytes128.blocks(0).bytes128.getBytes, StandardCharsets.UTF_8)
+    val text1 = new String(
+      new String(myAesBlockOfBytes128.blocks(1).bytes128.getBytes, StandardCharsets.UTF_8)
+        .toCharArray
+        .filter(c => c != 0x00.toChar)
     )
 
-    aesBytes128bitsRegular.bytes128.getBytes should be(bytesExpected)
+    text0 should be("Two One Nine Two")
+    text1 should be(" lol 揦")
 
   }
 

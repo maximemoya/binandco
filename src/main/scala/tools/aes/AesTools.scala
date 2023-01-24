@@ -16,7 +16,8 @@ object AesTools extends App {
     val table16x16Encode = Table16x16.getAesSubstitutionBOX
     val keyExpansion = KeyExpansion128bits.of(keyBytes128, table16x16Encode)
 
-    val aesBytes128bitsRegular: AesBytes128bitsInterface = AesBytes128bitsImplementationRegular.of("Two One Nine Two")
+    val aesBytes128bitsRegular: AesBytes128bitsInterface =
+      AesBytes128bitsImplementationRegular.of("Two One Nine Two")
     val galoisFieldEncode = Bytes128.galoisFieldEncodeBox
 
     // ROUND0
@@ -51,18 +52,30 @@ object AesTools extends App {
   private def testExampleBlockBytes128(): Unit = {
 
     val keyBytes128 = Bytes128.of("Thats my Kung Fu")
-    val aesBytes128bitsRegular: AesBlocksBytes128bitsInterface = AesBlocksBytes128bitsImplementationRegular.of("Two One Nine Two", keyBytes128)
+    val aesBytes128bitsRegular: AesBlocksBytes128bitsInterface =
+      AesBlocksBytes128bitsImplementationRegular.of("Two One Nine Two", keyBytes128)
+
+    println("Encode:")
     aesBytes128bitsRegular
       .encodeBlocks()
       .printBlocks()
 
+    println("Decode:")
     aesBytes128bitsRegular
       .decodeBlocks()
       .printBlocks()
+    println(
+      "message = " +
+      new String(aesBytes128bitsRegular.blocks(0).bytes128.getBytes, StandardCharsets.UTF_8)
+    )
 
+    println("\nReverse:")
     aesBytes128bitsRegular.blocks.foreach(block => block.bytes128.reverseBytes128())
     aesBytes128bitsRegular.printBlocks()
-    println(new String(aesBytes128bitsRegular.blocks(0).bytes128.getBytes, StandardCharsets.UTF_8))
+    println(
+      "message = " +
+      new String(aesBytes128bitsRegular.blocks(0).bytes128.getBytes, StandardCharsets.UTF_8)
+    )
   }
 
   testExampleBlockBytes128()
