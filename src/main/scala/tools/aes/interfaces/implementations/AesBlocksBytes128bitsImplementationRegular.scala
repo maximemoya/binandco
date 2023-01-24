@@ -26,25 +26,25 @@ object AesBlocksBytes128bitsImplementationRegular {
       override val blocks: Array[AesBytes128bitsInterface] = bytesN2.map(bytes128bits => AesBytes128bitsImplementationRegular.of(bytes128bits.getBytes))
       override val tableEncode: Table16x16 = Table16x16.getAesSubstitutionBOX
       override val tableDecode: Table16x16 = Table16x16.createDecodeTable16x16(tableEncode)
-      override val keyExpansionEncode: KeyExpansion128bits = KeyExpansion128bits(key128bits, tableEncode)
+      override val keyExpansion: KeyExpansion128bits = KeyExpansion128bits(key128bits, tableEncode)
       override val galoisFieldEncodeBox: Bytes128 = Bytes128.galoisFieldEncodeBox
       override val galoisFieldDecodeBox: Bytes128 = Bytes128.galoisFieldDecodeBox
 
       override def encodeBlocks(): AesBlocksBytes128bitsInterface = {
 
         for (i <- this.blocks.indices) {
-          this.blocks(i).addRoundKey(this.keyExpansionEncode, 0)
+          this.blocks(i).addRoundKey(this.keyExpansion, 0)
           for (j <- 1 until 10) {
             this.blocks(i)
               .subBytes(this.tableEncode)
               .shiftRowsEncode()
               .mixColumns(this.galoisFieldEncodeBox)
-              .addRoundKey(this.keyExpansionEncode, j)
+              .addRoundKey(this.keyExpansion, j)
           }
           this.blocks(i)
             .subBytes(this.tableEncode)
             .shiftRowsEncode()
-            .addRoundKey(this.keyExpansionEncode, 10)
+            .addRoundKey(this.keyExpansion, 10)
         }
         this
 
@@ -54,17 +54,17 @@ object AesBlocksBytes128bitsImplementationRegular {
 
         for (i <- this.blocks.indices) {
           this.blocks(i)
-            .addRoundKey(this.keyExpansionEncode, 10)
+            .addRoundKey(this.keyExpansion, 10)
             .shiftRowsDecode()
             .subBytes(this.tableDecode)
           for (j <- 0 until 9) {
             this.blocks(i)
-              .addRoundKey(this.keyExpansionEncode, 9-j)
+              .addRoundKey(this.keyExpansion, 9-j)
               .mixColumns(this.galoisFieldDecodeBox)
-              .shiftRowsEncode()
+              .shiftRowsDecode()
               .subBytes(this.tableDecode)
           }
-          this.blocks(i).addRoundKey(this.keyExpansionEncode, 0)
+          this.blocks(i).addRoundKey(this.keyExpansion, 0)
         }
         this
 
@@ -79,11 +79,12 @@ object TryBlock extends App {
   myAesBlockOfBytes128.tableDecode.printTable()
   myAesBlockOfBytes128.galoisFieldEncodeBox.printBytes128()
   myAesBlockOfBytes128.galoisFieldDecodeBox.printBytes128()
-  myAesBlockOfBytes128.keyExpansionEncode.printWords()
+  myAesBlockOfBytes128.keyExpansion.printWords()
   myAesBlockOfBytes128.printBlocks()
-
   println(new String(myAesBlockOfBytes128.blocks(0).bytes128.getBytes, StandardCharsets.UTF_8))
-  myAesBlockOfBytes128.blocks.foreach(block => block.bytes128.reverseBytes128())
-  println(new String(myAesBlockOfBytes128.blocks(0).bytes128.getBytes, StandardCharsets.UTF_8))
+  myAesBlockOfBytes128.encodeBlocks()
+  myAesBlockOfBytes128.printBlocks()
+  myAesBlockOfBytes128.decodeBlocks()
+  myAesBlockOfBytes128.printBlocks()
 
 }

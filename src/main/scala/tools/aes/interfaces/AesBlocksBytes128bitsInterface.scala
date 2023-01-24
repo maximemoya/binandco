@@ -5,9 +5,7 @@ trait AesBlocksBytes128bitsInterface {
 
   val blocks: Array[AesBytes128bitsInterface]
 
-  val keyExpansionEncode: KeyExpansion128bits
-  //TODO: make decode key expansion method
-  //  val keyExpansionDecode: KeyExpansion128bits
+  val keyExpansion: KeyExpansion128bits
   val tableEncode: Table16x16
   val tableDecode: Table16x16
   val galoisFieldEncodeBox: Bytes128

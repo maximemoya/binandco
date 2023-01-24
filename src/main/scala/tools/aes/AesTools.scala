@@ -55,15 +55,13 @@ object AesTools extends App {
     aesBytes128bitsRegular
       .encodeBlocks()
       .printBlocks()
-//    aesBytes128bitsRegular.blocks.foreach(block => block.bytes128.reverseBytes128())
-//    aesBytes128bitsRegular.printBlocks()
 
     aesBytes128bitsRegular
       .decodeBlocks()
       .printBlocks()
-//    aesBytes128bitsRegular.blocks.foreach(block => block.bytes128.reverseBytes128())
-//    aesBytes128bitsRegular.printBlocks()
 
+    aesBytes128bitsRegular.blocks.foreach(block => block.bytes128.reverseBytes128())
+    aesBytes128bitsRegular.printBlocks()
     println(new String(aesBytes128bitsRegular.blocks(0).bytes128.getBytes, StandardCharsets.UTF_8))
   }
 
