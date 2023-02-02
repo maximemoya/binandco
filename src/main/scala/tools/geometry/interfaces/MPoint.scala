@@ -1,7 +1,7 @@
 package fr.maxime.binandco
 package tools.geometry.interfaces
 
-trait MPoint {
+private trait MPoint {
   val x: Double
   val y: Double
 }
@@ -11,4 +11,5 @@ object MPoint {
     override val x: Double = _x
     override val y: Double = _y
   }
+  
 }

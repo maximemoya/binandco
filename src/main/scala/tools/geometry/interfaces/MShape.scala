@@ -1,7 +1,7 @@
 package fr.maxime.binandco
 package tools.geometry.interfaces
 
-trait MShape {
+private trait MShape {
   val points: Array[MPoint]
   val sides: Array[MLine]
 }
