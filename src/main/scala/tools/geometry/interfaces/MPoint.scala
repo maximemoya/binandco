@@ -12,4 +12,40 @@ object MPoint {
     override val y: Double = _y
   }
   
+  def getMaxX(points: Array[MPoint]): Double = {
+    var result = points(0).x
+    for (point <- points) {
+      if (point.x > result) result = point.x
+    }
+    result
+  }
+  def getMaxX(points: MPoint*): Double = getMaxX(points.toArray)
+
+  def getMinX(points: Array[MPoint]): Double = {
+    var result = points(0).x
+    for (point <- points) {
+      if (point.x < result) result = point.x
+    }
+    result
+  }
+  def getMinX(points: MPoint*): Double = getMinX(points.toArray)
+
+  def getMaxY(points: Array[MPoint]): Double = {
+    var result = points(0).y
+    for (point <- points) {
+      if (point.y > result) result = point.y
+    }
+    result
+  }
+  def getMaxY(points: MPoint*): Double = getMaxY(points.toArray)
+
+  def getMinY(points: Array[MPoint]): Double = {
+    var result = points(0).y
+    for (point <- points) {
+      if (point.y < result) result = point.y
+    }
+    result
+  }
+  def getMinY(points: MPoint*): Double = getMinY(points.toArray)
+
 }
