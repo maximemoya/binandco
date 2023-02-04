@@ -43,8 +43,58 @@ object MTriangle {
       line0.getDirection match {
         case DirectionMLine.DOWN =>
           if (line0.getDirectionEquation.isEmpty) {
-            //TODO:
-            false
+            if (line1.getDirection == DirectionMLine.LEFT) {
+              if (
+                point.x <= line0.getStartPoint.x
+                  && line1.getDirectionEquation.isDefined
+                  && point.y >= line1.getDirectionEquation.get(point.x)
+                  && line2.getDirectionEquation.isDefined
+                  && point.y <= line2.getDirectionEquation.get(point.x)
+              ) {
+                true
+              }
+              else false
+            }
+            else if (line1.getDirection == DirectionMLine.RIGHT) {
+              if (
+                point.x >= line0.getStartPoint.x
+                  && line1.getDirectionEquation.isDefined
+                  && point.y >= line1.getDirectionEquation.get(point.x)
+                  && line2.getDirectionEquation.isDefined
+                  && point.y <= line2.getDirectionEquation.get(point.x)
+              ) {
+                true
+              }
+              else false
+            }
+            else {
+              if (line0.getEndPoint.x >= line1.getEndPoint.x) {
+                //line1 is at left side
+                if (
+                  point.x <= line0.getStartPoint.x
+                    && line1.getDirectionEquation.isDefined
+                    && point.y >= line1.getDirectionEquation.get(point.x)
+                    && line2.getDirectionEquation.isDefined
+                    && point.y <= line2.getDirectionEquation.get(point.x)
+                ) {
+                  true
+                }
+                else false
+              }
+              else {
+                //line1 is at right side
+                if (
+                  point.x >= line0.getStartPoint.x
+                    && line1.getDirectionEquation.isDefined
+                    && point.y >= line1.getDirectionEquation.get(point.x)
+                    && line2.getDirectionEquation.isDefined
+                    && point.y <= line2.getDirectionEquation.get(point.x)
+                ) {
+                  true
+                }
+                else false
+              }
+            }
           }
           else {
             //TODO:
@@ -60,11 +110,47 @@ object MTriangle {
             false
           }
         case DirectionMLine.LEFT =>
-          //TODO:
-          false
-        case DirectionMLine.RIGHT =>
           if (line1.getDirection == DirectionMLine.UP) {
             if (
+              line0.getDirectionEquation.isDefined
+                && point.y >= line0.getDirectionEquation.get(point.x)
+                && line1.getDirectionEquation.isDefined
+                && point.y <= line1.getDirectionEquation.get(point.x)
+                && line2.getDirectionEquation.isDefined
+                && point.y >= line2.getDirectionEquation.get(point.x)
+            ) {
+              true
+            }
+            else false
+          }
+          else {
+            if (
+              line0.getDirectionEquation.isDefined
+                && point.y <= line0.getDirectionEquation.get(point.x)
+                && line1.getDirectionEquation.isDefined
+                && point.y >= line1.getDirectionEquation.get(point.x)
+                && line2.getDirectionEquation.isDefined
+                && point.y <= line2.getDirectionEquation.get(point.x)
+            ) {
+              true
+            }
+            else false
+          }
+        case DirectionMLine.RIGHT =>
+          if (line1.getDirection == DirectionMLine.UP) {
+            if(line1.getDirectionEquation.isEmpty){
+              if (
+                line0.getDirectionEquation.isDefined
+                  && point.y >= line0.getDirectionEquation.get(point.x)
+                  && point.x <= line1.getStartPoint.x
+                  && line2.getDirectionEquation.isDefined
+                  && point.y <= line2.getDirectionEquation.get(point.x)
+              ) {
+                true
+              }
+              else false
+            }
+            else if (
               line0.getDirectionEquation.isDefined
                 && point.y >= line0.getDirectionEquation.get(point.x)
                 && line1.getDirectionEquation.isDefined
@@ -77,7 +163,19 @@ object MTriangle {
             else false
           }
           else {
-            if (
+            if (line1.getDirectionEquation.isEmpty) {
+              if (
+                line0.getDirectionEquation.isDefined
+                  && point.y <= line0.getDirectionEquation.get(point.x)
+                  && point.x <= line1.getStartPoint.x
+                  && line2.getDirectionEquation.isDefined
+                  && point.y >= line2.getDirectionEquation.get(point.x)
+              ) {
+                true
+              }
+              else false
+            }
+            else if (
               line0.getDirectionEquation.isDefined
                 && point.y <= line0.getDirectionEquation.get(point.x)
                 && line1.getDirectionEquation.isDefined
