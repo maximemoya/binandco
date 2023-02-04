@@ -11,6 +11,68 @@ import scala.collection.mutable
 
 class MTriangleTest extends AnyFlatSpec with should.Matchers {
 
+  "Geometry_MTriangle" should "isPointInside_First" in {
+
+    val pointA = MPoint(2.0, 2.0)
+    val pointB = MPoint(4.0, 2.0)
+    val pointC = MPoint(4.5, 4.0)
+    val triangle = MTriangle.default(pointA, pointB, pointC)
+
+    val outsidePointUp = MPoint(4.0, 4.1)
+    val outsidePointLeft = MPoint(2.5, 3.0)
+    val outsidePointDown = MPoint(3.0, 1.9)
+    val outsidePointRight = MPoint(4.5, 3.0)
+
+    triangle.isPointInside(outsidePointUp) should be(false)
+    triangle.isPointInside(outsidePointLeft) should be(false)
+    triangle.isPointInside(outsidePointDown) should be(false)
+    triangle.isPointInside(outsidePointRight) should be(false)
+
+    val insidePointUp = MPoint(4.5, 4.0)
+    val insidePointLeft = MPoint(2.0, 2.0)
+    val insidePointDown = MPoint(3.0, 2.0)
+    val insidePointRight = MPoint(4.0, 2.0)
+    val insidePointCenter = MPoint(3.5, 3.0)
+
+    triangle.isPointInside(insidePointUp) should be(true)
+    triangle.isPointInside(insidePointLeft) should be(true)
+    triangle.isPointInside(insidePointDown) should be(true)
+    triangle.isPointInside(insidePointRight) should be(true)
+    triangle.isPointInside(insidePointCenter) should be(true)
+
+  }
+
+  "Geometry_MTriangle" should "isPointInside_FirstReversed" in {
+
+    val pointA = MPoint(2.0, 2.0)
+    val pointB = MPoint(4.0, 2.0)
+    val pointC = MPoint(5.0, 0.0)
+    val triangle = MTriangle.default(pointA, pointB, pointC)
+
+    val outsidePointUp = MPoint(3.0, 2.1)
+    val outsidePointLeft = MPoint(3.5, 0.5)
+    val outsidePointDown = MPoint(5.0, -0.1)
+    val outsidePointRight = MPoint(4.6, 1.0)
+
+    triangle.isPointInside(outsidePointUp) should be(false)
+    triangle.isPointInside(outsidePointLeft) should be(false)
+    triangle.isPointInside(outsidePointDown) should be(false)
+    triangle.isPointInside(outsidePointRight) should be(false)
+
+    val insidePointUp = MPoint(3.0, 2.0)
+    val insidePointLeft = MPoint(2.0, 2.0)
+    val insidePointDown = MPoint(5.0, 0.0)
+    val insidePointRight = MPoint(4.0, 2.0)
+    val insidePointCenter = MPoint(3.5, 1.0)
+
+    triangle.isPointInside(insidePointUp) should be(true)
+    triangle.isPointInside(insidePointLeft) should be(true)
+    triangle.isPointInside(insidePointDown) should be(true)
+    triangle.isPointInside(insidePointRight) should be(true)
+    triangle.isPointInside(insidePointCenter) should be(true)
+
+  }
+
   "Geometry_MTriangle" should "isPointInside_Normal" in {
 
     val pointA = MPoint(2.0, 2.0)
