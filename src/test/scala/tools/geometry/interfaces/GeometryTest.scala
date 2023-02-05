@@ -10,6 +10,22 @@ import scala.collection.mutable
 
 class GeometryTest extends AnyFlatSpec with should.Matchers {
 
+  "Geometry_basic" should "MPoint_orderByX" in {
+    val pointA = MPoint(2.0, 2.0)
+    val pointB = MPoint(4.0, 5.0)
+    val pointC = MPoint(4.0, 6.0)
+    val pointD = MPoint(1.0, 1.0)
+    MPoint.orderByX(Array(pointA, pointB, pointC, pointD)) should be(Array(pointD, pointA, pointB, pointC))
+  }
+
+  "Geometry_basic" should "MPoint_orderByY" in {
+    val pointA = MPoint(2.0, 2.0)
+    val pointB = MPoint(4.0, 5.0)
+    val pointC = MPoint(4.0, 6.0)
+    val pointD = MPoint(1.0, 1.0)
+    MPoint.orderByY(Array(pointA, pointB, pointC, pointD)) should be(Array(pointD, pointA, pointB, pointC))
+  }
+
   "Geometry_basic" should "MLine_getDirectionEquation" in {
 
     val pointA = MPoint(2.0, 2.0)
