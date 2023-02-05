@@ -102,8 +102,58 @@ object MTriangle {
           }
         case DirectionMLine.UP =>
           if (line0.getDirectionEquation.isEmpty) {
-            //TODO:
-            false
+            if (line1.getDirection == DirectionMLine.LEFT) {
+              if (
+                point.x <= line0.getStartPoint.x
+                  && line1.getDirectionEquation.isDefined
+                  && point.y <= line1.getDirectionEquation.get(point.x)
+                  && line2.getDirectionEquation.isDefined
+                  && point.y >= line2.getDirectionEquation.get(point.x)
+              ) {
+                true
+              }
+              else false
+            }
+            else if (line1.getDirection == DirectionMLine.RIGHT) {
+              if (
+                point.x >= line0.getStartPoint.x
+                  && line1.getDirectionEquation.isDefined
+                  && point.y <= line1.getDirectionEquation.get(point.x)
+                  && line2.getDirectionEquation.isDefined
+                  && point.y >= line2.getDirectionEquation.get(point.x)
+              ) {
+                true
+              }
+              else false
+            }
+            else {
+              if (line0.getEndPoint.x >= line1.getEndPoint.x) {
+                //line1 is at left side
+                if (
+                  point.x <= line0.getStartPoint.x
+                    && line1.getDirectionEquation.isDefined
+                    && point.y <= line1.getDirectionEquation.get(point.x)
+                    && line2.getDirectionEquation.isDefined
+                    && point.y >= line2.getDirectionEquation.get(point.x)
+                ) {
+                  true
+                }
+                else false
+              }
+              else {
+                //line1 is at right side
+                if (
+                  point.x >= line0.getStartPoint.x
+                    && line1.getDirectionEquation.isDefined
+                    && point.y <= line1.getDirectionEquation.get(point.x)
+                    && line2.getDirectionEquation.isDefined
+                    && point.y >= line2.getDirectionEquation.get(point.x)
+                ) {
+                  true
+                }
+                else false
+              }
+            }
           }
           else {
             //TODO:
