@@ -327,7 +327,6 @@ object MTriangle {
     //      else false
     //    }
 
-
   }
 
 }

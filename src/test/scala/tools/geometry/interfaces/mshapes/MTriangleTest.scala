@@ -9,6 +9,8 @@ import org.scalatest.matchers.should
 
 import scala.collection.mutable
 
+val implementationToTest = MTriangle.default
+
 class MTriangleTest extends AnyFlatSpec with should.Matchers {
 
   "Geometry_MTriangle" should "isPointInside_T1_RIGHT_THEN_UP_RIGHT" in {
@@ -16,7 +18,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 2.0)
     val pointB = MPoint(4.0, 2.0)
     val pointC = MPoint(4.5, 4.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(4.0, 4.1)
     val outsidePointLeft = MPoint(2.5, 3.0)
@@ -47,7 +49,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 2.0)
     val pointB = MPoint(4.0, 2.0)
     val pointC = MPoint(5.0, 0.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(3.0, 2.1)
     val outsidePointLeft = MPoint(3.5, 0.5)
@@ -78,7 +80,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(4.0, 2.0)
     val pointB = MPoint(2.0, 2.0)
     val pointC = MPoint(4.5, 4.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(4.0, 4.1)
     val outsidePointLeft = MPoint(2.5, 3.0)
@@ -109,7 +111,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(4.0, 2.0)
     val pointB = MPoint(2.0, 2.0)
     val pointC = MPoint(5.0, 0.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(3.0, 2.1)
     val outsidePointLeft = MPoint(3.5, 0.5)
@@ -140,7 +142,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 2.0)
     val pointB = MPoint(2.0, 0.0)
     val pointC = MPoint(1.0, 1.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(1.5, 1.6)
     val outsidePointLeft = MPoint(0.9, 1.0)
@@ -171,7 +173,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 2.0)
     val pointB = MPoint(2.0, 0.0)
     val pointC = MPoint(3.0, 1.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(2.5, 1.6)
     val outsidePointLeft = MPoint(1.9, 1.0)
@@ -202,7 +204,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 2.0)
     val pointB = MPoint(2.0, 0.0)
     val pointC = MPoint(0.0, -1.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(2.0, 2.1)
     val outsidePointLeft = MPoint(0.9, 0.5)
@@ -233,7 +235,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 2.0)
     val pointB = MPoint(2.0, 0.0)
     val pointC = MPoint(4.0, -1.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(2.0, 2.1)
     val outsidePointLeft = MPoint(1.9, 1.0)
@@ -264,7 +266,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 2.0)
     val pointB = MPoint(2.0, 0.0)
     val pointC = MPoint(0.0, 0.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(2.0, 2.1)
     val outsidePointLeft = MPoint(1.0, 1.1)
@@ -295,7 +297,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 2.0)
     val pointB = MPoint(2.0, 0.0)
     val pointC = MPoint(4.0, 0.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(2.0, 2.1)
     val outsidePointLeft = MPoint(1.9, 1.0)
@@ -326,7 +328,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 0.0)
     val pointB = MPoint(2.0, 2.0)
     val pointC = MPoint(1.0, 3.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(1.5, 2.6)
     val outsidePointLeft = MPoint(1.5, 1.0)
@@ -357,7 +359,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 0.0)
     val pointB = MPoint(2.0, 2.0)
     val pointC = MPoint(3.0, 3.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(2.5, 2.6)
     val outsidePointLeft = MPoint(1.9, 1.0)
@@ -388,7 +390,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 0.0)
     val pointB = MPoint(2.0, 2.0)
     val pointC = MPoint(1.0, 1.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(1.5, 1.6)
     val outsidePointLeft = MPoint(0.9, 1.0)
@@ -419,7 +421,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 0.0)
     val pointB = MPoint(2.0, 2.0)
     val pointC = MPoint(3.0, 1.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(2.5, 1.6)
     val outsidePointLeft = MPoint(1.9, 1.0)
@@ -450,7 +452,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 0.0)
     val pointB = MPoint(2.0, 2.0)
     val pointC = MPoint(1.0, 2.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(1.5, 2.1)
     val outsidePointLeft = MPoint(1.4, 1.0)
@@ -481,7 +483,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
     val pointA = MPoint(2.0, 0.0)
     val pointB = MPoint(2.0, 2.0)
     val pointC = MPoint(3.0, 2.0)
-    val triangle = MTriangle.default(pointA, pointB, pointC)
+    val triangle = implementationToTest(pointA, pointB, pointC)
 
     val outsidePointUp = MPoint(2.5, 2.1)
     val outsidePointLeft = MPoint(1.9, 1.0)
