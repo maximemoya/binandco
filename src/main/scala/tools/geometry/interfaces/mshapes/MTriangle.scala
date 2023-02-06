@@ -34,13 +34,44 @@ object MTriangle {
 
     override def isPointInside(point: MPoint): Boolean = {
 
-      if (!isPointInsideRectArea(point)) return false
-      val pointsByXOrder = MPoint.orderByX(points)
-      val line0 = MLine.default(pointsByXOrder(0),pointsByXOrder(1))
-      val line1 = MLine.default(pointsByXOrder(0),pointsByXOrder(2))
-      val line2 = MLine.default(pointsByXOrder(1),pointsByXOrder(2))
+      if (!isPointInsideRectArea(point)) {
+        println("not in rect\n")
+        return false
+      }
 
-      false
+      if (point.equal(points)) return true
+
+      val eq1 = (points(0).x - point.x) * (points(1).y - point.y) - (points(0).y - point.y) * (points(1).x - point.x)
+      val eq2 = (points(1).x - point.x) * (points(2).y - point.y) - (points(1).y - point.y) * (points(2).x - point.x)
+      val eq3 = (points(2).x - point.x) * (points(0).y - point.y) - (points(2).y - point.y) * (points(0).x - point.x)
+      println(
+        s"eq1 = ${eq1.toString}\n" +
+          s"eq2 = ${eq2.toString}\n" +
+          s"eq3 = ${eq3.toString}\n"
+      )
+
+      if (eq1.sign == 0.0 || eq1.sign == -0.0) {
+        if (eq2.sign == 0.0 || eq2.sign == -0.0) {
+          true
+        }
+        else {
+          if (eq2.sign == eq3.sign) true else false
+        }
+      }
+      else if (eq2.sign == 0.0 || eq2.sign == -0.0) {
+        if (eq3.sign == 0.0 || eq3.sign == -0.0) {
+          true
+        }
+        else {
+          if (eq1.sign == eq3.sign) true else false
+        }
+      }
+      else if (eq3.sign == 0.0 || eq3.sign == -0.0) {
+        if (eq1.sign == eq2.sign) true else false
+      }
+      else {
+        if (eq1.sign == eq2.sign && eq1.sign == eq3.sign) true else false
+      }
 
     }
 

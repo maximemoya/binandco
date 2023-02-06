@@ -7,6 +7,12 @@ import scala.collection.mutable.ListBuffer
 private trait MPoint {
   val x: Double
   val y: Double
+  def equal(points:Array[MPoint]): Boolean = {
+    for(point<-points){
+      if(point.x == x && point.y == y) return true
+    }
+    false
+  }
 }
 
 object MPoint {
