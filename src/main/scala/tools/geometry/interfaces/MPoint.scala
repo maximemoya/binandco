@@ -7,12 +7,14 @@ import scala.collection.mutable.ListBuffer
 private trait MPoint {
   val x: Double
   val y: Double
-  def equal(points:Array[MPoint]): Boolean = {
-    for(point<-points){
-      if(point.x == x && point.y == y) return true
+
+  def equal(points: Array[MPoint]): Boolean = {
+    for (point <- points) {
+      if (point.x == x && point.y == y) return true
     }
     false
   }
+
 }
 
 object MPoint {
@@ -37,8 +39,6 @@ object MPoint {
     result
   }
 
-  def getMaxX(points: MPoint*): Double = getMaxX(points.toArray)
-
   def getMinX(points: Array[MPoint]): Double = {
     var result = points(0).x
     for (point <- points) {
@@ -46,8 +46,6 @@ object MPoint {
     }
     result
   }
-
-  def getMinX(points: MPoint*): Double = getMinX(points.toArray)
 
   def getMaxY(points: Array[MPoint]): Double = {
     var result = points(0).y
@@ -57,8 +55,6 @@ object MPoint {
     result
   }
 
-  def getMaxY(points: MPoint*): Double = getMaxY(points.toArray)
-
   def getMinY(points: Array[MPoint]): Double = {
     var result = points(0).y
     for (point <- points) {
@@ -66,7 +62,5 @@ object MPoint {
     }
     result
   }
-
-  def getMinY(points: MPoint*): Double = getMinY(points.toArray)
 
 }

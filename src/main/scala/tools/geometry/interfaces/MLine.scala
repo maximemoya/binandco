@@ -2,57 +2,26 @@ package fr.maxime.binandco
 package tools.geometry.interfaces
 
 import tools.geometry.interfaces.MPoint
-import tools.geometry.interfaces.DirectionMLine
 
 private trait MLine {
 
-  def getStartPoint: MPoint
-
-  def getEndPoint: MPoint
-
   /**
-   * equation of the line as ' f (x) = y ' can be None
+   * {{{
+   * Equation of the line as 'f(x) = y'
+   * can be None when line is vertical
+   * }}}
    *
    * @return A Double
    */
   def getDirectionEquation: Option[Double => Double]
-
-  def getDirection: DirectionMLine
-
-  //  def f: Double => Double
-
-  def isPointBetweenX(point: MPoint): Boolean
-
-  def isPointBetweenY(point: MPoint): Boolean
 
   def getMLineInfo: String
 
 }
 
 object MLine {
+
   def default(pointA: MPoint, pointB: MPoint): MLine = new MLine {
-
-    //    override def getStartPoint: MPoint = {
-    //      if (pointA.x < pointB.x) pointA
-    //      else if (pointA.x == pointB.x) {
-    //        if (pointA.y < pointB.y) pointA
-    //        else pointB
-    //      }
-    //      else pointB
-    //    }
-    //
-    //    override def getEndPoint: MPoint = {
-    //      if (pointA.x < pointB.x) pointB
-    //      else if (pointA.x == pointB.x) {
-    //        if (pointA.y < pointB.y) pointB
-    //        else pointA
-    //      }
-    //      else pointA
-    //    }
-
-    override def getStartPoint: MPoint = pointA
-
-    override def getEndPoint: MPoint = pointB
 
     private def calculateEquation(deltaX: Double, deltaY: Double): Double => Double = {
       if (deltaX != 0.0) {
@@ -70,57 +39,18 @@ object MLine {
     private val equation: Double => Double = calculateEquation(deltaX, deltaY)
 
     override def getDirectionEquation: Option[Double => Double] = {
-      if (equation(0) == Double.MaxValue && equation(1) == Double.MaxValue) {
-        None
-      }
-      else {
-        Some(equation)
-      }
+      if (equation(0) == Double.MaxValue && equation(1) == Double.MaxValue) None
+      else Some(equation)
     }
 
-    override def getDirection: DirectionMLine = {
-      if (equation(0) == equation(1) && equation(0) != Double.MaxValue) {
-        if (deltaX < 0) {
-          DirectionMLine.LEFT
-        }
-        else {
-          DirectionMLine.RIGHT
-        }
-      }
-      else {
-        if (deltaY < 0) {
-          DirectionMLine.DOWN
-        }
-        else {
-          DirectionMLine.UP
-        }
-      }
-    }
-
-    //    override def f: Double => Double = equation
-
-    private def length(deltaX: Double, deltaY: Double): Double = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+    private def size(deltaX: Double, deltaY: Double): Double = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
 
     override def getMLineInfo: String = {
       s" MLine:" +
         s"\n\tEquation: Y = ${String.format("%.2f", equation(1) - equation(0))} X + ${String.format("%.2f", equation(0))}" +
         s"\n\tPointA: ( ${String.format("%.2f", pointA.x)} | ${String.format("%.2f", pointA.y)} )" +
         s"\n\tPointB: ( ${String.format("%.2f", pointB.x)} | ${String.format("%.2f", pointB.y)} )" +
-        s"\n\tlength: ${String.format("%.2f", length(deltaX, deltaY))}"
-    }
-
-    override def isPointBetweenX(point: MPoint): Boolean = {
-      val startPointX = Math.min(pointA.x, pointB.x)
-      val endPointX = Math.max(pointA.x, pointB.x)
-      if (point.x >= startPointX && point.x <= endPointX) true
-      else false
-    }
-
-    override def isPointBetweenY(point: MPoint): Boolean = {
-      val startPointY = Math.min(pointA.y, pointB.y)
-      val endPointY = Math.max(pointA.y, pointB.y)
-      if (point.y >= startPointY && point.y <= endPointY) true
-      else false
+        s"\n\tsize: ${String.format("%.2f", size(deltaX, deltaY))}"
     }
 
   }

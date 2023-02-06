@@ -757,7 +757,7 @@ class MTriangleTest extends AnyFlatSpec with should.Matchers {
 
   }
 
-  "Geometry_MTriangle" should "isPointInside_Extra" in {
+  "Geometry_MTriangle" should "isPointInside_T8_Extra" in {
 
     val pointA = MPoint(0.0, 2.0)
     val pointB = MPoint(-5.0, -5.0)

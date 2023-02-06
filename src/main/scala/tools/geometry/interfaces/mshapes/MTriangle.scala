@@ -1,7 +1,7 @@
 package fr.maxime.binandco
 package tools.geometry.interfaces.mshapes
 
-import tools.geometry.interfaces.{DirectionMLine, MLine, MPoint, MShape}
+import tools.geometry.interfaces.{MLine, MPoint, MShape}
 
 private trait MTriangle extends MShape {
 
@@ -12,13 +12,8 @@ private trait MTriangle extends MShape {
 object MTriangle {
 
   def default(pointA: MPoint, pointB: MPoint, pointC: MPoint): MTriangle = new MTriangle {
+
     private val points: Array[MPoint] = Array[MPoint](pointA, pointB, pointC)
-    private val sides: Array[MLine] = {
-      val lineA = MLine.default(pointA, pointB)
-      val lineB = MLine.default(pointB, pointC)
-      val lineC = MLine.default(pointC, pointA)
-      Array[MLine](lineA, lineB, lineC)
-    }
     private val maxRectPoint = MPoint(MPoint.getMaxX(points), MPoint.getMaxY(points))
     private val minRectPoint = MPoint(MPoint.getMinX(points), MPoint.getMinY(points))
 
@@ -34,21 +29,12 @@ object MTriangle {
 
     override def isPointInside(point: MPoint): Boolean = {
 
-      if (!isPointInsideRectArea(point)) {
-        println("not in rect\n")
-        return false
-      }
-
+      if (!isPointInsideRectArea(point)) return false
       if (point.equal(points)) return true
 
       val eq1 = (points(0).x - point.x) * (points(1).y - point.y) - (points(0).y - point.y) * (points(1).x - point.x)
       val eq2 = (points(1).x - point.x) * (points(2).y - point.y) - (points(1).y - point.y) * (points(2).x - point.x)
       val eq3 = (points(2).x - point.x) * (points(0).y - point.y) - (points(2).y - point.y) * (points(0).x - point.x)
-      println(
-        s"eq1 = ${eq1.toString}\n" +
-          s"eq2 = ${eq2.toString}\n" +
-          s"eq3 = ${eq3.toString}\n"
-      )
 
       if (eq1.sign == 0.0 || eq1.sign == -0.0) {
         if (eq2.sign == 0.0 || eq2.sign == -0.0) {
