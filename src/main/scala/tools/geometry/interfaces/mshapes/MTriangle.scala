@@ -5,7 +5,7 @@ import tools.geometry.interfaces.{MLine, MPoint, MShape}
 
 private trait MTriangle extends MShape {
 
-  def isPointInside(point: MPoint): Boolean
+  override def isPointInside(point: MPoint): Boolean
 
 }
 
