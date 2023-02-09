@@ -21,7 +21,7 @@ private class MEffect[E, V](_error: E, _value: V) {
   }
 
   def convertValueToError: MEffect[V, MNone] = {
-    MEffect.failed(this.value)
+    MEffect.fail(this.value)
   }
 
 }
@@ -32,7 +32,7 @@ object MEffect {
     new MEffect[MNone, V](new MNone {}, value)
   }
 
-  def failed[E](error: E): MEffect[E, MNone] = {
+  def fail[E](error: E): MEffect[E, MNone] = {
     new MEffect[E, MNone](error, new MNone {})
   }
 
@@ -44,7 +44,7 @@ object TestMEffect extends App {
   val b = a.resolveEffectOrFail
   println(s"effect value: $b")
 
-  val c = MEffect.failed("MyError")
+  val c = MEffect.fail("MyError")
   val d = c.convertErrorToValue
   println(s"effect error: ${d.resolveEffectOrFail}")
 
